@@ -8,6 +8,12 @@ export interface AppCopy {
     readonly germanLabel: string
     readonly englishLabel: string
   }
+  readonly theme: {
+    readonly pickerLabel: string
+    readonly systemLabel: string
+    readonly lightLabel: string
+    readonly darkLabel: string
+  }
   readonly meta: {
     readonly title: string
     readonly description: string
@@ -122,6 +128,12 @@ export const copyByLanguage = {
       germanLabel: 'Deutsch',
       englishLabel: 'English',
     },
+    theme: {
+      pickerLabel: 'Darstellung',
+      systemLabel: 'System',
+      lightLabel: 'Hell',
+      darkLabel: 'Dunkel',
+    },
     meta: {
       title: 'Ranker – Deine persönliche Rangliste',
       description:
@@ -234,6 +246,12 @@ export const copyByLanguage = {
       pickerLabel: 'Language',
       germanLabel: 'Deutsch',
       englishLabel: 'English',
+    },
+    theme: {
+      pickerLabel: 'Appearance',
+      systemLabel: 'System',
+      lightLabel: 'Light',
+      darkLabel: 'Dark',
     },
     meta: {
       title: 'Ranker – Your personal ranking',

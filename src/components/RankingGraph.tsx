@@ -2,10 +2,12 @@ import type { Graph as G6Graph, GraphData } from '@antv/g6'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { copyByLanguage, type Language } from '../i18n.ts'
 import type { RankingGraph as RankingGraphData } from '../ranking/types.ts'
+import type { ColorScheme } from '../theme.ts'
 import './RankingGraph.css'
 
 interface RankingGraphProps {
   readonly activeItemIds?: readonly string[]
+  readonly colorScheme: ColorScheme
   readonly graph: RankingGraphData
   readonly language: Language
 }
@@ -192,6 +194,7 @@ function useMediaQuery(query: string): boolean {
 
 export function RankingGraph({
   activeItemIds = [],
+  colorScheme,
   graph,
   language,
 }: RankingGraphProps) {
@@ -200,7 +203,6 @@ export function RankingGraph({
   const renderQueueRef = useRef<RenderQueue | null>(null)
   const latestDataRef = useRef<GraphData>({ nodes: [], edges: [] })
   const [hasRenderError, setHasRenderError] = useState(false)
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
   const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
   const activeItemIdSet = useMemo(() => new Set(activeItemIds), [activeItemIds])
   const graphData = useMemo<GraphData>(
@@ -293,7 +295,7 @@ export function RankingGraph({
         renderQueueRef.current = null
       }
     }
-  }, [hasNodes, prefersDarkMode, prefersReducedMotion])
+  }, [colorScheme, hasNodes, prefersReducedMotion])
 
   useEffect(() => {
     const queue = renderQueueRef.current

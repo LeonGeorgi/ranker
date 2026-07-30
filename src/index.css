@@ -1,5 +1,5 @@
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
   --font-display:
     "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia,
     serif;
@@ -86,58 +86,53 @@ button {
   background: #cbd5ff;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #f0eee6;
-    background: #151815;
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  color: #f0eee6;
+  background: #151815;
 
-    --accent: #8ca4ff;
-    --accent-solid: #3558cf;
-    --accent-solid-hover: #4262d3;
-    --on-accent: #fff;
-    --border-control: #626861;
-    --border-hover: #858b81;
-    --border-strong: #858b81;
-    --border-subtle: #343934;
-    --choice-hover: #202b43;
-    --danger-border: #704943;
-    --danger-border-strong: #d98177;
-    --danger-button: #b95d53;
-    --danger-button-hover: #ca6e64;
-    --danger-focus: rgb(217 129 119 / 26%);
-    --danger-surface: #2a1f1d;
-    --danger-text: #e6a49d;
-    --disabled-surface: #303530;
-    --focus-soft: rgb(140 164 255 / 26%);
-    --graph-accent: #8ca4ff;
-    --graph-dot: #252a25;
-    --graph-edge: #777d74;
-    --graph-edge-latest: #a8b9ff;
-    --graph-label: #f0eee6;
-    --graph-node-fill: #202520;
-    --graph-node-stroke: #71776e;
-    --progress-track: #343934;
-    --success: #73bd92;
-    --success-strong: #8fd2aa;
-    --surface-page: #151815;
-    --surface-hover: #2a2f2a;
-    --surface-raised: #202520;
-    --surface-raised-soft: #2a2f2a;
-    --text-disabled: #686d66;
-    --text-faint: #92978f;
-    --text-muted: #b7bbb3;
-    --text-strong: #f0eee6;
-    --warning-text: #d7ae6b;
-  }
+  --accent: #8ca4ff;
+  --accent-solid: #3558cf;
+  --accent-solid-hover: #4262d3;
+  --on-accent: #fff;
+  --border-control: #626861;
+  --border-hover: #858b81;
+  --border-strong: #858b81;
+  --border-subtle: #343934;
+  --choice-hover: #202b43;
+  --danger-border: #704943;
+  --danger-border-strong: #d98177;
+  --danger-button: #b95d53;
+  --danger-button-hover: #ca6e64;
+  --danger-focus: rgb(217 129 119 / 26%);
+  --danger-surface: #2a1f1d;
+  --danger-text: #e6a49d;
+  --disabled-surface: #303530;
+  --focus-soft: rgb(140 164 255 / 26%);
+  --graph-accent: #8ca4ff;
+  --graph-dot: #252a25;
+  --graph-edge: #777d74;
+  --graph-edge-latest: #a8b9ff;
+  --graph-label: #f0eee6;
+  --graph-node-fill: #202520;
+  --graph-node-stroke: #71776e;
+  --progress-track: #343934;
+  --success: #73bd92;
+  --success-strong: #8fd2aa;
+  --surface-page: #151815;
+  --surface-hover: #2a2f2a;
+  --surface-raised: #202520;
+  --surface-raised-soft: #2a2f2a;
+  --text-disabled: #686d66;
+  --text-faint: #92978f;
+  --text-muted: #b7bbb3;
+  --text-strong: #f0eee6;
+  --warning-text: #d7ae6b;
+}
 
-  html {
-    background: #151815;
-  }
-
-  ::selection {
-    color: #f4f6ff;
-    background: #344783;
-  }
+:root[data-theme='dark'] ::selection {
+  color: #f4f6ff;
+  background: #344783;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,10 +1,18 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import './App.css'
 import { ComparisonPanel } from './components/ComparisonPanel.tsx'
 import { ConfirmResetDialog } from './components/ConfirmResetDialog.tsx'
 import { ListSetup } from './components/ListSetup.tsx'
 import { RankingGraph } from './components/RankingGraph.tsx'
 import { RankingResult } from './components/RankingResult.tsx'
+import { ThemeSwitcher } from './components/ThemeSwitcher.tsx'
 import {
   copyByLanguage,
   DEFAULT_LANGUAGE,
@@ -30,6 +38,13 @@ import {
   writeStoredRankingSession,
   type StoredSessionIssue,
 } from './ranking/storage.ts'
+import {
+  DEFAULT_THEME,
+  readStoredTheme,
+  writeStoredTheme,
+  type ColorScheme,
+  type ThemePreference,
+} from './theme.ts'
 
 const EMPTY_GRAPH: RankingGraphData = { nodes: [], edges: [] }
 
@@ -37,6 +52,7 @@ interface InitialAppState {
   readonly issue: StoredSessionIssue
   readonly language: Language
   readonly session: RankingSession | null
+  readonly theme: ThemePreference
 }
 
 type StorageWarningCode =
@@ -51,12 +67,14 @@ function loadInitialAppState(): InitialAppState {
     return {
       ...storedSession,
       language: readStoredLanguage(storage),
+      theme: readStoredTheme(storage),
     }
   } catch {
     return {
       issue: 'unavailable',
       language: DEFAULT_LANGUAGE,
       session: null,
+      theme: DEFAULT_THEME,
     }
   }
 }
@@ -67,6 +85,32 @@ function persistLanguage(language: Language): void {
   } catch {
     // The in-memory language change remains usable when browser storage is blocked.
   }
+}
+
+function persistTheme(theme: ThemePreference): void {
+  try {
+    writeStoredTheme(window.localStorage, theme)
+  } catch {
+    // The in-memory theme change remains usable when browser storage is blocked.
+  }
+}
+
+function useSystemPrefersDarkMode(): boolean {
+  const [prefersDarkMode, setPrefersDarkMode] = useState(
+    () => window.matchMedia('(prefers-color-scheme: dark)').matches,
+  )
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const handleChange = (event: MediaQueryListEvent) => {
+      setPrefersDarkMode(event.matches)
+    }
+    mediaQuery.addEventListener('change', handleChange)
+
+    return () => mediaQuery.removeEventListener('change', handleChange)
+  }, [])
+
+  return prefersDarkMode
 }
 
 function createSessionSeed(): number {
@@ -100,6 +144,7 @@ function setMetaContent(selector: string, content: string): void {
 function App() {
   const [initialState] = useState(loadInitialAppState)
   const [language, setLanguage] = useState<Language>(initialState.language)
+  const [theme, setTheme] = useState<ThemePreference>(initialState.theme)
   const [session, setSession] = useState<RankingSession | null>(
     initialState.session,
   )
@@ -110,6 +155,9 @@ function App() {
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false)
   const [storageWarningCode, setStorageWarningCode] =
     useState<StorageWarningCode>(initialState.issue)
+  const prefersDarkMode = useSystemPrefersDarkMode()
+  const colorScheme: ColorScheme =
+    theme === 'system' ? (prefersDarkMode ? 'dark' : 'light') : theme
   const copy = copyByLanguage[language]
   const storageWarning = getStorageWarningMessage(
     storageWarningCode,
@@ -131,6 +179,19 @@ function App() {
     setLanguage(nextLanguage)
     persistLanguage(nextLanguage)
   }
+
+  const changeTheme = (nextTheme: ThemePreference) => {
+    setTheme(nextTheme)
+    persistTheme(nextTheme)
+  }
+
+  useLayoutEffect(() => {
+    document.documentElement.dataset.theme = colorScheme
+    setMetaContent(
+      'meta[name="theme-color"]',
+      colorScheme === 'dark' ? '#151815' : '#f3efe4',
+    )
+  }, [colorScheme])
 
   useEffect(() => {
     document.documentElement.lang = language
@@ -267,6 +328,12 @@ function App() {
             )}
           </div>
 
+          <ThemeSwitcher
+            copy={copy.theme}
+            theme={theme}
+            onChange={changeTheme}
+          />
+
           <div
             className="language-switch"
             role="group"
@@ -335,6 +402,7 @@ function App() {
         {hasActiveSession && (
           <RankingGraph
             activeItemIds={activeItemIds}
+            colorScheme={colorScheme}
             graph={graph}
             language={language}
           />

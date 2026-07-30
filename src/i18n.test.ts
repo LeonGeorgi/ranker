@@ -6,6 +6,21 @@ describe('interface copy', () => {
     expect(DEFAULT_LANGUAGE).toBe('de')
   })
 
+  it('localizes every theme preference', () => {
+    expect(copyByLanguage.de.theme).toEqual({
+      pickerLabel: 'Darstellung',
+      systemLabel: 'System',
+      lightLabel: 'Hell',
+      darkLabel: 'Dunkel',
+    })
+    expect(copyByLanguage.en.theme).toEqual({
+      pickerLabel: 'Appearance',
+      systemLabel: 'System',
+      lightLabel: 'Light',
+      darkLabel: 'Dark',
+    })
+  })
+
   it('formats German and English singulars and plurals', () => {
     expect(copyByLanguage.de.setup.itemCount(1)).toBe('1 Eintrag')
     expect(copyByLanguage.de.setup.itemCount(2)).toBe('2 Einträge')
