@@ -110,62 +110,66 @@ export function ListSetup({
           </button>
         </div>
 
-        <div className="setup-form__label-row">
-          <label htmlFor="ranking-items">{copy.listLabel}</label>
-          <span>{countLabel}</span>
-        </div>
-        <p id="ranking-items-help" className="field-help">
-          {copy.help}
-        </p>
-        <textarea
-          id="ranking-items"
-          name="ranking-items"
-          value={draft}
-          onChange={(event) => onDraftChange(event.target.value)}
-          onKeyDown={handleTextareaKeyDown}
-          aria-describedby="ranking-items-help ranking-items-feedback"
-          aria-invalid={shouldShowError}
-          placeholder={copy.placeholder}
-          rows={11}
-        />
-
-        <div id="ranking-items-feedback" className="setup-form__feedback">
-          {shouldShowError && (
-            <p className="field-message field-message--error" role="alert">
-              {analysis.error}
-            </p>
-          )}
-          {analysis.error === null && analysis.warning !== null && (
-            <p className="field-message field-message--warning">
-              {analysis.warning}
-            </p>
-          )}
-        </div>
-
-        <button
-          type="submit"
-          className="primary-action setup-form__submit"
-          disabled={analysis.error !== null}
-        >
-          <span className="setup-form__submit-copy">
-            <span>{copy.start}</span>
-            <span className="setup-form__submit-estimate">
-              {copy.expectedComparisons(expectedDecisionCount)}
-            </span>
-          </span>
-          <span className="setup-form__submit-arrow" aria-hidden="true">
-            →
-          </span>
-        </button>
-
-        <p className="local-note">
-          <span aria-hidden="true">●</span> {copy.localNote}
-        </p>
-        {storageWarning !== null && (
-          <p className="setup-storage-warning" role="status">
-            {storageWarning}
+        <div className="setup-form__custom-list">
+          <div className="setup-form__label-row">
+            <label htmlFor="ranking-items">{copy.listLabel}</label>
+            <span>{countLabel}</span>
+          </div>
+          <p id="ranking-items-help" className="field-help">
+            {copy.help}
           </p>
-        )}
+          <textarea
+            id="ranking-items"
+            name="ranking-items"
+            value={draft}
+            onChange={(event) => onDraftChange(event.target.value)}
+            onKeyDown={handleTextareaKeyDown}
+            aria-describedby="ranking-items-help ranking-items-feedback"
+            aria-invalid={shouldShowError}
+            placeholder={copy.placeholder}
+            rows={7}
+          />
+
+          <div id="ranking-items-feedback" className="setup-form__feedback">
+            {shouldShowError && (
+              <p className="field-message field-message--error" role="alert">
+                {analysis.error}
+              </p>
+            )}
+            {analysis.error === null && analysis.warning !== null && (
+              <p className="field-message field-message--warning">
+                {analysis.warning}
+              </p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            className="primary-action setup-form__submit"
+            disabled={analysis.error !== null}
+          >
+            <span className="setup-form__submit-copy">
+              <span>{copy.start}</span>
+              <span className="setup-form__submit-estimate">
+                {copy.expectedComparisons(expectedDecisionCount)}
+              </span>
+            </span>
+            <span className="setup-form__submit-arrow" aria-hidden="true">
+              →
+            </span>
+          </button>
+        </div>
+
+        <div className="setup-form__status">
+          <p className="local-note">
+            <span aria-hidden="true">●</span> {copy.localNote}
+          </p>
+          {storageWarning !== null && (
+            <p className="setup-storage-warning" role="status">
+              {storageWarning}
+            </p>
+          )}
+        </div>
       </form>
     </section>
   )

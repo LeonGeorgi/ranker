@@ -54,8 +54,7 @@ describe('interface copy', () => {
   it('uses criterion-neutral wording for comparisons', () => {
     expect(copyByLanguage.de.setup.title).toBe('Was gewinnt?')
     expect(copyByLanguage.de.comparison.title).toBe('Was gewinnt?')
-    expect(copyByLanguage.en.comparison.title).toBe(
-      'Which item ranks higher?',
-    )
+    expect(copyByLanguage.en.setup.title).toBe('What wins?')
+    expect(copyByLanguage.en.comparison.title).toBe('What wins?')
   })
 })

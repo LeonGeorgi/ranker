@@ -206,6 +206,24 @@
   }
 }
 
+@media (min-width: 62.01rem) and (max-height: 52rem) {
+  .comparison-panel {
+    padding-block: 1.25rem;
+  }
+
+  .comparison-panel__question {
+    padding-block: clamp(1.5rem, 4vh, 2rem);
+  }
+
+  .choice-stack {
+    margin-top: 1.75rem;
+  }
+
+  .choice-button {
+    min-height: 9rem;
+  }
+}
+
 @media (max-width: 62rem) {
   .comparison-panel {
     align-items: center;

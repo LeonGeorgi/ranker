@@ -257,7 +257,7 @@ export const copyByLanguage = {
       title: 'Ranker – Your personal ranking',
       description:
         'Create your personal ranking through simple head-to-head comparisons.',
-      openGraphTitle: 'Ranker – Which item ranks higher?',
+      openGraphTitle: 'Ranker – What wins?',
       openGraphDescription:
         'Turn simple pairwise comparisons into your personal ranking.',
       openGraphLocale: 'en_US',
@@ -274,7 +274,7 @@ export const copyByLanguage = {
     },
     setup: {
       kicker: 'New ranking',
-      title: 'What ranks higher?',
+      title: 'What wins?',
       description:
         'Add your choices and decide each comparison using your own criterion. Ranker turns those decisions into one definitive order, step by step.',
       examplesLabel: 'What would you like to rank?',
@@ -308,7 +308,7 @@ export const copyByLanguage = {
       progressLabel: 'Determined pairwise order',
       determinedProgress: (percent) =>
         `${percent}% of pairwise relationships are already determined.`,
-      title: 'Which item ranks higher?',
+      title: 'What wins?',
       hint:
         'Use your criterion to decide. Ties are not available in this version.',
       divider: 'or',

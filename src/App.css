@@ -8,9 +8,9 @@
   justify-content: space-between;
   gap: 1rem;
   width: min(100%, 104rem);
-  min-height: 4.75rem;
+  min-height: 4rem;
   margin: 0 auto;
-  padding: 1rem clamp(1.25rem, 3vw, 3.25rem);
+  padding: 0.75rem clamp(1.25rem, 3vw, 3.25rem);
 }
 
 .brand {
@@ -143,7 +143,7 @@
   grid-template-columns: minmax(24rem, 0.86fr) minmax(34rem, 1.14fr);
   gap: 0;
   width: min(100%, 104rem);
-  min-height: calc(100svh - 4.75rem);
+  min-height: calc(100svh - 4rem);
   margin: 0 auto;
   padding: 0 clamp(1.25rem, 3vw, 3.25rem) clamp(1.25rem, 3vw, 3.25rem);
 }
@@ -258,6 +258,12 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+@media (min-width: 62.01rem) and (max-height: 52rem) {
+  .app-workspace {
+    padding-bottom: 0;
+  }
 }
 
 @media (max-width: 62rem) {
