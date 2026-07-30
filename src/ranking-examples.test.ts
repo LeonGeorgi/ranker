@@ -16,6 +16,7 @@ describe('ranking examples', () => {
       for (const id of RANKING_EXAMPLE_IDS) {
         const example = examples[id]
         expect(example.title).not.toHaveLength(0)
+        expect(example.items).toHaveLength(7)
         expect(analyzeRankingInput(example.items.join('\n'), language)).toEqual({
           labels: example.items,
           error: null,
