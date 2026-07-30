@@ -1,0 +1,152 @@
+:root {
+  color-scheme: light dark;
+  --font-display:
+    "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia,
+    serif;
+  --font-ui:
+    "Avenir Next", Avenir, ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-data:
+    "SFMono-Regular", "Cascadia Code", "Roboto Mono", Consolas,
+    "Liberation Mono", monospace;
+
+  font-family: var(--font-ui);
+  color: #1d211d;
+  background: #f3efe4;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --accent: #2450e6;
+  --accent-solid: #2450e6;
+  --accent-solid-hover: #173fca;
+  --on-accent: #fff;
+  --border-control: #858a82;
+  --border-hover: #777c74;
+  --border-strong: #777c74;
+  --border-subtle: #d7d5cc;
+  --choice-hover: #e9edff;
+  --danger-border: #e3beb8;
+  --danger-border-strong: #b95e53;
+  --danger-button: #a9483e;
+  --danger-button-hover: #923b33;
+  --danger-focus: rgb(169 72 62 / 22%);
+  --danger-surface: #fff4f1;
+  --danger-text: #96463e;
+  --disabled-surface: #d9d7ce;
+  --focus-soft: rgb(36 80 230 / 22%);
+  --graph-accent: #2450e6;
+  --graph-dot: #deddd6;
+  --graph-edge: #777c74;
+  --graph-edge-latest: #2450e6;
+  --graph-label: #1d211d;
+  --graph-node-fill: #f8f5ec;
+  --graph-node-stroke: #7f847c;
+  --progress-track: #d7d5cc;
+  --success: #3d8a62;
+  --success-strong: #27734d;
+  --surface-page: #f3efe4;
+  --surface-hover: #e8e5dc;
+  --surface-raised: #faf7ef;
+  --surface-raised-soft: #e6e3da;
+  --text-disabled: #999b94;
+  --text-faint: #666b64;
+  --text-muted: #5d625b;
+  --text-strong: #1d211d;
+  --warning-text: #896020;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 20rem;
+  background: #f3efe4;
+}
+
+body {
+  min-width: 20rem;
+  min-height: 100vh;
+  margin: 0;
+}
+
+button,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  touch-action: manipulation;
+}
+
+::selection {
+  color: #101c4a;
+  background: #cbd5ff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: #f0eee6;
+    background: #151815;
+
+    --accent: #8ca4ff;
+    --accent-solid: #3558cf;
+    --accent-solid-hover: #4262d3;
+    --on-accent: #fff;
+    --border-control: #626861;
+    --border-hover: #858b81;
+    --border-strong: #858b81;
+    --border-subtle: #343934;
+    --choice-hover: #202b43;
+    --danger-border: #704943;
+    --danger-border-strong: #d98177;
+    --danger-button: #b95d53;
+    --danger-button-hover: #ca6e64;
+    --danger-focus: rgb(217 129 119 / 26%);
+    --danger-surface: #2a1f1d;
+    --danger-text: #e6a49d;
+    --disabled-surface: #303530;
+    --focus-soft: rgb(140 164 255 / 26%);
+    --graph-accent: #8ca4ff;
+    --graph-dot: #252a25;
+    --graph-edge: #777d74;
+    --graph-edge-latest: #a8b9ff;
+    --graph-label: #f0eee6;
+    --graph-node-fill: #202520;
+    --graph-node-stroke: #71776e;
+    --progress-track: #343934;
+    --success: #73bd92;
+    --success-strong: #8fd2aa;
+    --surface-page: #151815;
+    --surface-hover: #2a2f2a;
+    --surface-raised: #202520;
+    --surface-raised-soft: #2a2f2a;
+    --text-disabled: #686d66;
+    --text-faint: #92978f;
+    --text-muted: #b7bbb3;
+    --text-strong: #f0eee6;
+    --warning-text: #d7ae6b;
+  }
+
+  html {
+    background: #151815;
+  }
+
+  ::selection {
+    color: #f4f6ff;
+    background: #344783;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
