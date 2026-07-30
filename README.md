@@ -1,32 +1,67 @@
 # Ranker
 
-Ranker erstellt aus einfachen Paarvergleichen eine eindeutige persönliche
-Rangliste. Die Anwendung zeigt bereits verglichene Einträge als gerichteten
-Graphen, speichert den Fortschritt lokal und lässt Entscheidungen rückgängig
-machen. Abgeschlossene Ranglisten bleiben beim Start eines neuen Rankings im
-lokalen Verlauf erhalten.
+Ranker turns simple head-to-head choices into one exact personal ranking. As you
+compare items, the app builds a directed decision graph, saves your progress
+locally, and lets you undo your latest choice. Completed rankings remain
+available in a local history when you start a new one.
 
-Die Oberfläche ist auf Deutsch und Englisch verfügbar. Ohne gespeicherte
-Auswahl startet sie auf Englisch, bei einer deutschen Browsersprache auf
-Deutsch. Die gewählte Sprache wird separat vom Ranking lokal im Browser
-gespeichert und beim Zurücksetzen beibehalten. Die App funktioniert ohne Server
-und basiert auf React, TypeScript, Vite und AntV G6.
+The interface is available in English and German. It starts in English unless
+the browser prefers German, remembers the selected language independently of a
+ranking, and offers system, light, and dark themes. Ranker runs entirely in the
+browser without an account, backend, or network requests.
 
-## Voraussetzungen
+## Features
 
-- Node.js 24 oder neuer
-- npm 11 oder neuer
+- Paste one item per line and rank between 2 and 50 unique items. Labels are
+  trimmed and limited to 120 characters; lists with more than 30 items show a
+  duration warning.
+- Start from one of three randomly selected, localized example lists and replace
+  all three with another set at any time.
+- Choose the preferred item with the buttons, `1` and `2`, or the left and right
+  arrow keys.
+- Follow the permanent history of actual decisions in a directed graph. Every
+  arrow points from the less-preferred item to the preferred item.
+- See how much of the final order can already be derived transitively, and undo
+  the most recent decision at any time.
+- See the final best-to-worst order immediately, with a brief reveal animation,
+  once it is uniquely determined, then copy the numbered list to the clipboard.
+- Keep the active session and completed rankings in separate, versioned
+  `localStorage` entries. Resetting an active ranking does not clear the history.
+- Continue in memory if browser storage is unavailable; the interface reports
+  that the current data is temporary.
 
-## Entwicklung
+## How ranking works
+
+Ranker creates a balanced merge tree over a seeded shuffle of the input. A
+weighted scheduler interleaves new discovery pairs with merge comparisons and
+avoids repeatedly showing the same items. This produces an exact total order;
+it is not an Elo rating, score, or win-count approximation.
+
+The start button shows the rounded expected number of comparisons for the
+current list size. This estimate is the exact mean of the balanced merge process
+under a uniformly shuffled strict order, not a guaranteed number of questions.
+The final ranking becomes available only when the merge is complete and the
+decision graph admits exactly one topological order.
+
+The session stores only the schema version, deterministic seed, ordered items,
+and decision log. Questions, graph data, progress, and the result are derived by
+replaying that canonical state, so reloading and undoing remain deterministic.
+
+## Requirements
+
+- Node.js 24 or newer
+- npm 11 or newer
+
+## Local development
 
 ```sh
 npm install
 npm run dev
 ```
 
-Der Entwicklungsserver gibt die lokale URL im Terminal aus.
+Vite prints the local development URL in the terminal.
 
-## Qualitätsprüfungen
+## Verification
 
 ```sh
 npm run lint
@@ -35,54 +70,37 @@ npm run build
 npm run check
 ```
 
-`npm run check` führt Linting, die Vitest-Suite, die TypeScript-Prüfung und den
-Produktions-Build aus.
+`npm run check` is the complete local verification command. It runs ESLint, the
+Vitest suite, the TypeScript build, and the Vite production build.
 
-## Funktionsweise
+## Ranking simulation
 
-- Pro Zeile wird ein Eintrag importiert; zwischen 2 und 50 Einträge sind
-  möglich.
-- Auf der Startseite werden drei zufällige, lokalisierte Beispiellisten
-  angeboten. Sie lassen sich gemeinsam durch drei andere Beispiele ersetzen.
-- Jede Antwort erzeugt im Graphen eine Kante vom niedriger eingeordneten zum
-  höher eingeordneten Eintrag.
-- Neue Zweiergruppen und das Zusammenführen bestehender Rangfolgen wechseln
-  sich gewichtet ab. Dadurch werden möglichst wenige Vergleiche gebraucht,
-  ohne immer dieselben mittleren Einträge abzufragen.
-- Der Start-Button zeigt vorab die gerundete erwartete Anzahl an Vergleichen für
-  die aktuelle Listengröße.
-- Die Ergebnisansicht wird erst freigegeben, wenn der Graph genau eine
-  vollständige Rangfolge zulässt.
-- Beim Verlassen einer abgeschlossenen Rangliste wird die vollständige Session
-  im lokalen Verlauf archiviert. Der Verlauf ist über die Toolbar erreichbar.
-- Liste, Zufalls-Seed und Entscheidungen liegen versioniert im `localStorage`.
-  Der aktuelle Vergleich lässt sich daraus deterministisch rekonstruieren.
-- Laufende Session und Verlauf verwenden getrennte versionierte
-  `localStorage`-Einträge, damit das Zurücksetzen eines Rankings den Verlauf
-  nicht löscht.
-
-## Ranking-Simulation
-
-Eine reproduzierbare Monte-Carlo-Simulation zählt die Vergleiche des
-balancierten Merge-Verfahrens und prüft dabei sowohl die rekonstruierte
-Rangfolge als auch deren Eindeutigkeit im Vergleichsgraphen:
+The reproducible Monte Carlo simulation measures comparison counts for the
+balanced merge process and verifies both the recovered order and its uniqueness
+in the comparison graph:
 
 ```sh
 npm run simulate:ranking
 ```
 
-Optional lassen sich Umfang, Listenlängen und Seed anpassen, zum Beispiel mit
-`npm run simulate:ranking -- --trials=10000 --lengths=10,25,50 --seed=42`.
+The number of trials, list sizes, and seed are configurable. For example:
 
-## Projektstruktur
+```sh
+npm run simulate:ranking -- --trials=10000 --lengths=10,25,50 --seed=42
+```
 
-- `src/main.tsx` bindet React ein und aktiviert den Strict Mode.
-- `src/App.tsx` verbindet Sitzungszustand, lokale Speicherung und Ansichten.
-- `src/components/` enthält die fokussierten Oberflächenkomponenten.
-- `src/ranking/` enthält den deterministischen Ranking-Kern, Validierung,
-  Graphableitung, Verlauf und Speicherung sowie die zugehörigen Tests.
-- `src/index.css` definiert globale Grundlagen und Design-Tokens.
-- `src/App.css` definiert den responsiven Arbeitsbereich.
-- `public/og.png` ist das Vorschaubild für geteilte Links.
-- `scripts/simulate-ranking.mjs` analysiert den Ranking-Algorithmus.
-- `AGENTS.md` dokumentiert die verbindlichen Arbeits- und Wartungsregeln.
+## Project structure
+
+- `src/main.tsx` mounts React and enables Strict Mode.
+- `src/App.tsx` coordinates the application phases, canonical session, local
+  persistence, language, theme, and history.
+- `src/components/` contains the focused interface components, including the
+  comparison panel, decision graph, result, and ranking-history dialog.
+- `src/ranking/` contains the deterministic ranking engine, input validation,
+  graph derivation, history, persistence boundaries, and their tests.
+- `src/i18n.ts` contains all English and German interface copy.
+- `src/index.css` defines global foundations and design tokens; `src/App.css`
+  defines the responsive workspace.
+- `public/og.png` is the social-sharing preview image.
+- `scripts/simulate-ranking.mjs` independently analyzes the ranking algorithm.
+- `AGENTS.md` documents the project's implementation and maintenance rules.

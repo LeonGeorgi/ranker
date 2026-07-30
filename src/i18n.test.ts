@@ -21,6 +21,17 @@ describe('interface copy', () => {
     })
   })
 
+  it('localizes compact mobile controls', () => {
+    expect(copyByLanguage.de.header.settings).toBe('Einstellungen')
+    expect(copyByLanguage.en.header.settings).toBe('Settings')
+    expect(copyByLanguage.de.graph.expand).toBe(
+      'Große Graphansicht öffnen',
+    )
+    expect(copyByLanguage.en.graph.collapse).toBe(
+      'Show compact graph view',
+    )
+  })
+
   it('formats German and English singulars and plurals', () => {
     expect(copyByLanguage.de.setup.itemCount(1)).toBe('1 Eintrag')
     expect(copyByLanguage.de.setup.itemCount(2)).toBe('2 Einträge')

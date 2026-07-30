@@ -49,14 +49,18 @@
   font-weight: 700;
 }
 
-.graph-control:hover:not(:disabled) {
-  border-color: var(--border-hover);
-  background: var(--surface-hover);
+.graph-control--expand {
+  display: none;
 }
 
 .graph-control:disabled {
   cursor: default;
   opacity: 0.38;
+}
+
+.graph-control:active:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--choice-hover);
 }
 
 .graph-stage {
@@ -169,29 +173,33 @@
 
 @media (max-width: 40rem) {
   .graph-panel {
-    min-height: 27rem;
-    grid-template-rows: auto minmax(20rem, 1fr) auto;
+    min-height: 20rem;
+    grid-template-rows: auto minmax(12rem, 1fr) auto;
+  }
+
+  .graph-panel--expanded {
+    min-height: min(80svh, 42rem);
+    grid-template-rows: auto minmax(min(55svh, 28rem), 1fr) auto;
   }
 
   .graph-panel__header {
-    align-items: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
     padding: 1rem;
   }
 
+  .graph-controls {
+    margin-inline-start: auto;
+  }
+
   .graph-control {
-    min-width: 2.5rem;
-    min-height: 2.5rem;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
   }
 
-  .graph-control--fit {
-    width: 2.5rem;
+  .graph-control--expand {
+    display: inline-grid;
     padding: 0;
-    font-size: 0;
-  }
-
-  .graph-control--fit::before {
-    font-size: 0.9rem;
-    content: '⤢';
   }
 
   .graph-legend {
@@ -207,6 +215,24 @@
 
   .graph-controls {
     align-self: flex-end;
+    margin-inline-start: 0;
+  }
+}
+
+@media (max-width: 40rem) and (pointer: coarse) {
+  .graph-panel:not(.graph-panel--expanded) .graph-stage {
+    touch-action: pan-y;
+  }
+
+  .graph-panel:not(.graph-panel--expanded) .graph-canvas {
+    pointer-events: none;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .graph-control:hover:not(:disabled) {
+    border-color: var(--border-hover);
+    background: var(--surface-hover);
   }
 }
 

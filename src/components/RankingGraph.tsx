@@ -203,6 +203,7 @@ export function RankingGraph({
   const renderQueueRef = useRef<RenderQueue | null>(null)
   const latestDataRef = useRef<GraphData>({ nodes: [], edges: [] })
   const [hasRenderError, setHasRenderError] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
   const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
   const activeItemIdSet = useMemo(() => new Set(activeItemIds), [activeItemIds])
   const graphData = useMemo<GraphData>(
@@ -306,6 +307,23 @@ export function RankingGraph({
     }
   }, [graphData, prefersReducedMotion])
 
+  useEffect(() => {
+    const instance = graphRef.current
+    if (instance === null) {
+      return
+    }
+
+    const frame = window.requestAnimationFrame(() => {
+      instance.resize()
+      void instance.fitView(
+        { when: 'always', direction: 'both' },
+        prefersReducedMotion ? false : { duration: 220, easing: 'ease-out' },
+      )
+    })
+
+    return () => window.cancelAnimationFrame(frame)
+  }, [isExpanded, prefersReducedMotion])
+
   const changeZoom = (ratio: number) => {
     const instance = graphRef.current
     if (instance !== null) {
@@ -331,7 +349,12 @@ export function RankingGraph({
     : copy.emptyDescription
 
   return (
-    <section className="graph-panel" aria-labelledby="graph-title">
+    <section
+      className={
+        isExpanded ? 'graph-panel graph-panel--expanded' : 'graph-panel'
+      }
+      aria-labelledby="graph-title"
+    >
       <div className="graph-panel__header">
         <div>
           <p className="section-kicker">{copy.kicker}</p>
@@ -365,10 +388,22 @@ export function RankingGraph({
           >
             {copy.fit}
           </button>
+          <button
+            type="button"
+            className="graph-control graph-control--expand"
+            onClick={() => setIsExpanded((current) => !current)}
+            disabled={!hasNodes}
+            aria-controls="graph-stage"
+            aria-expanded={isExpanded}
+            aria-label={isExpanded ? copy.collapse : copy.expand}
+            title={isExpanded ? copy.collapse : copy.expand}
+          >
+            <span aria-hidden="true">↕</span>
+          </button>
         </div>
       </div>
 
-      <div className="graph-stage">
+      <div className="graph-stage" id="graph-stage">
         <div className="graph-canvas-frame">
           <div
             ref={containerRef}

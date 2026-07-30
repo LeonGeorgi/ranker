@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { copyByLanguage, type Language } from '../i18n.ts'
 import type { RankingSnapshot } from '../ranking/types.ts'
+import { UndoIcon } from './UndoIcon.tsx'
 import './ComparisonPanel.css'
 
 interface ComparisonPanelProps {
@@ -94,9 +95,11 @@ export function ComparisonPanel({
         <p>{copy.determinedProgress(determinedPercent)}</p>
       </div>
 
-      <div className="comparison-panel__question" key={question.id}>
+      <div className="comparison-panel__question">
         <p className="section-kicker">{questionKindLabel}</p>
-        <h1 id="comparison-title">{copy.title}</h1>
+        <h1 id="comparison-title" tabIndex={-1}>
+          {copy.title}
+        </h1>
         <p className="comparison-panel__hint">{copy.hint}</p>
 
         <div className="choice-stack">
@@ -139,7 +142,8 @@ export function ComparisonPanel({
           onClick={onUndo}
           disabled={progress.decisionCount === 0}
         >
-          <span aria-hidden="true">↶</span> {copy.undo}
+          <UndoIcon />
+          {copy.undo}
         </button>
         <button type="button" className="text-action" onClick={onEditList}>
           {copy.editList}

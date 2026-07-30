@@ -1,4 +1,10 @@
-import { useMemo, useState, type FormEvent, type KeyboardEvent } from 'react'
+import {
+  useMemo,
+  useRef,
+  useState,
+  type FormEvent,
+  type KeyboardEvent,
+} from 'react'
 import { copyByLanguage, type Language } from '../i18n.ts'
 import {
   pickRankingExampleIds,
@@ -28,6 +34,7 @@ export function ListSetup({
   const [exampleIds, setExampleIds] = useState<
     readonly RankingExampleId[]
   >(() => pickRankingExampleIds())
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const copy = copyByLanguage[language].setup
   const examples = rankingExamplesByLanguage[language]
   const analysis = useMemo(
@@ -60,13 +67,23 @@ export function ListSetup({
   const insertExample = (exampleId: RankingExampleId) => {
     onDraftChange(examples[exampleId].items.join('\n'))
     setHasSubmitted(false)
+
+    textareaRef.current?.focus({ preventScroll: true })
+    textareaRef.current?.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 'auto'
+        : 'smooth',
+      block: 'center',
+    })
   }
 
   return (
     <section className="setup-panel" aria-labelledby="setup-title">
       <div className="setup-panel__intro">
         <p className="section-kicker">{copy.kicker}</p>
-        <h1 id="setup-title">{copy.title}</h1>
+        <h1 id="setup-title" tabIndex={-1}>
+          {copy.title}
+        </h1>
         <p>{copy.description}</p>
       </div>
 
@@ -100,9 +117,7 @@ export function ListSetup({
             type="button"
             className="text-action setup-examples__replace"
             onClick={() =>
-              setExampleIds((currentIds) =>
-                pickRankingExampleIds(currentIds),
-              )
+              setExampleIds((currentIds) => pickRankingExampleIds(currentIds))
             }
           >
             <span aria-hidden="true">↻</span>
@@ -119,6 +134,7 @@ export function ListSetup({
             {copy.help}
           </p>
           <textarea
+            ref={textareaRef}
             id="ranking-items"
             name="ranking-items"
             value={draft}

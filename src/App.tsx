@@ -69,10 +69,60 @@ type StorageWarningCode =
   | 'write-failed'
   | null
 
+type AppPhase = 'setup' | 'comparing' | 'result'
+
+const PHASE_HEADING_IDS: Readonly<Record<AppPhase, string>> = {
+  setup: 'setup-title',
+  comparing: 'comparison-title',
+  result: 'result-title',
+}
+
+interface LanguageSwitcherProps {
+  readonly copy: AppCopy['language']
+  readonly language: Language
+  readonly onChange: (language: Language) => void
+}
+
+function LanguageSwitcher({
+  copy,
+  language,
+  onChange,
+}: LanguageSwitcherProps) {
+  return (
+    <div
+      className="language-switch"
+      role="group"
+      aria-label={copy.pickerLabel}
+    >
+      <button
+        type="button"
+        className="language-switch__option"
+        lang="en"
+        aria-label={copy.englishLabel}
+        aria-pressed={language === 'en'}
+        onClick={() => onChange('en')}
+      >
+        EN
+      </button>
+      <button
+        type="button"
+        className="language-switch__option"
+        lang="de"
+        aria-label={copy.germanLabel}
+        aria-pressed={language === 'de'}
+        onClick={() => onChange('de')}
+      >
+        DE
+      </button>
+    </div>
+  )
+}
+
 interface HistoryButtonProps {
   readonly copy: AppCopy['history']
   readonly count: number
   readonly isDialogOpen: boolean
+  readonly isCompact?: boolean
   readonly onOpen: () => void
 }
 
@@ -80,6 +130,7 @@ function HistoryButton({
   copy,
   count,
   isDialogOpen,
+  isCompact = false,
   onOpen,
 }: HistoryButtonProps) {
   const label = copy.openLabel(count)
@@ -87,7 +138,11 @@ function HistoryButton({
   return (
     <button
       type="button"
-      className="history-button"
+      className={
+        isCompact
+          ? 'history-button history-button--compact'
+          : 'history-button'
+      }
       aria-controls="ranking-history-dialog"
       aria-expanded={isDialogOpen}
       aria-haspopup="dialog"
@@ -100,9 +155,56 @@ function HistoryButton({
         <path d="M10 5.75V10l2.75 1.75" />
         <path d="M4.75 4.75 3 4.6l.15 1.75" />
       </svg>
-      <span className="history-button__label">{copy.open}</span>
+      {!isCompact && <span>{copy.open}</span>}
       {count > 0 && <span className="history-button__count">{count}</span>}
     </button>
+  )
+}
+
+interface MobileSettingsProps {
+  readonly copy: AppCopy
+  readonly language: Language
+  readonly onLanguageChange: (language: Language) => void
+  readonly onThemeChange: (theme: ThemePreference) => void
+  readonly theme: ThemePreference
+}
+
+function MobileSettings({
+  copy,
+  language,
+  onLanguageChange,
+  onThemeChange,
+  theme,
+}: MobileSettingsProps) {
+  return (
+    <details className="mobile-settings">
+      <summary aria-label={copy.header.settings} title={copy.header.settings}>
+        <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+          <path d="M3 5h14M3 10h14M3 15h14" />
+          <circle cx="7" cy="5" r="1.5" />
+          <circle cx="13" cy="10" r="1.5" />
+          <circle cx="8.5" cy="15" r="1.5" />
+        </svg>
+      </summary>
+      <div className="mobile-settings__panel">
+        <div className="mobile-settings__row">
+          <span>{copy.theme.pickerLabel}</span>
+          <ThemeSwitcher
+            copy={copy.theme}
+            theme={theme}
+            onChange={onThemeChange}
+          />
+        </div>
+        <div className="mobile-settings__row">
+          <span>{copy.language.pickerLabel}</span>
+          <LanguageSwitcher
+            copy={copy.language}
+            language={language}
+            onChange={onLanguageChange}
+          />
+        </div>
+      </div>
+    </details>
   )
 }
 
@@ -223,7 +325,7 @@ function App() {
   const [draft, setDraft] = useState(() =>
     initialState.session?.items.map((item) => item.label).join('\n') ?? '',
   )
-  const [isResultRevealed, setIsResultRevealed] = useState(false)
+  const [shouldAnimateResult, setShouldAnimateResult] = useState(false)
   const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false)
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false)
   const [historyStorageWarningCode, setHistoryStorageWarningCode] =
@@ -246,6 +348,12 @@ function App() {
     () => (session === null ? null : deriveRankingSnapshot(session)),
     [session],
   )
+  const appPhase: AppPhase =
+    session === null || snapshot === null
+      ? 'setup'
+      : snapshot.finalRanking === null
+        ? 'comparing'
+        : 'result'
   const activeItemIds = useMemo(() => {
     const question = snapshot?.currentQuestion
     return question === null || question === undefined
@@ -253,6 +361,7 @@ function App() {
       : [question.left.id, question.right.id]
   }, [snapshot?.currentQuestion])
   const previousSessionRef = useRef(session)
+  const previousPhaseRef = useRef(appPhase)
 
   const changeLanguage = (nextLanguage: Language) => {
     setLanguage(nextLanguage)
@@ -285,6 +394,24 @@ function App() {
   }, [copy, language])
 
   useEffect(() => {
+    const previousPhase = previousPhaseRef.current
+    previousPhaseRef.current = appPhase
+
+    if (previousPhase === appPhase) {
+      return
+    }
+
+    window.scrollTo({ top: 0, left: 0 })
+    const frame = window.requestAnimationFrame(() => {
+      document.getElementById(PHASE_HEADING_IDS[appPhase])?.focus({
+        preventScroll: true,
+      })
+    })
+
+    return () => window.cancelAnimationFrame(frame)
+  }, [appPhase])
+
+  useEffect(() => {
     const previousSession = previousSessionRef.current
     previousSessionRef.current = session
 
@@ -313,7 +440,7 @@ function App() {
   const startRanking = (labels: readonly string[]) => {
     setSession(createRankingSession(labels, createSessionSeed()))
     setDraft(labels.join('\n'))
-    setIsResultRevealed(false)
+    setShouldAnimateResult(false)
     window.scrollTo({ top: 0, left: 0 })
   }
 
@@ -340,7 +467,7 @@ function App() {
           throw error
         }
       })
-      setIsResultRevealed(false)
+      setShouldAnimateResult(true)
     },
     [],
   )
@@ -351,7 +478,7 @@ function App() {
         ? null
         : undoLastRankingDecision(currentSession),
     )
-    setIsResultRevealed(false)
+    setShouldAnimateResult(false)
   }, [])
 
   const editList = () => {
@@ -388,7 +515,7 @@ function App() {
       }
     }
     setSession(null)
-    setIsResultRevealed(false)
+    setShouldAnimateResult(false)
     setIsResetDialogOpen(false)
     window.scrollTo({ top: 0, left: 0 })
   }
@@ -440,32 +567,28 @@ function App() {
             onChange={changeTheme}
           />
 
-          <div
-            className="language-switch"
-            role="group"
-            aria-label={copy.language.pickerLabel}
-          >
-            <button
-              type="button"
-              className="language-switch__option"
-              lang="en"
-              aria-label={copy.language.englishLabel}
-              aria-pressed={language === 'en'}
-              onClick={() => changeLanguage('en')}
-            >
-              EN
-            </button>
-            <button
-              type="button"
-              className="language-switch__option"
-              lang="de"
-              aria-label={copy.language.germanLabel}
-              aria-pressed={language === 'de'}
-              onClick={() => changeLanguage('de')}
-            >
-              DE
-            </button>
-          </div>
+          <LanguageSwitcher
+            copy={copy.language}
+            language={language}
+            onChange={changeLanguage}
+          />
+        </div>
+
+        <div className="app-header__mobile-tools">
+          <HistoryButton
+            copy={copy.history}
+            count={history.entries.length}
+            isCompact
+            isDialogOpen={isHistoryDialogOpen}
+            onOpen={() => setIsHistoryDialogOpen(true)}
+          />
+          <MobileSettings
+            copy={copy}
+            language={language}
+            onLanguageChange={changeLanguage}
+            onThemeChange={changeTheme}
+            theme={theme}
+          />
         </div>
       </header>
 
@@ -498,11 +621,11 @@ function App() {
           />
         ) : (
           <RankingResult
+            animateReveal={shouldAnimateResult}
             ranking={snapshot.finalRanking}
             decisionCount={snapshot.progress.decisionCount}
-            isRevealed={isResultRevealed}
             language={language}
-            onReveal={() => setIsResultRevealed(true)}
+            storageWarning={storageWarning}
             onUndo={undoDecision}
             onEditList={editList}
           />

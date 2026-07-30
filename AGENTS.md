@@ -4,7 +4,7 @@
 
 Ranker turns strict pairwise preferences into one exact personal ranking. A user
 pastes one label per line, repeatedly chooses the preferred of two displayed
-entries, watches the resulting preference graph grow, and may reveal the final
+entries, watches the resulting preference graph grow, and sees the final
 best-to-worst order once it is uniquely determined.
 
 The current product scope is deliberately narrow:
@@ -91,19 +91,18 @@ transitive reduction and not merely the final ranking:
 
 ## Application phases and user-data behavior
 
-Keep the four observable phases distinct:
+Keep the three observable phases distinct:
 
 1. Setup: no session exists; the user edits and validates a newline-separated
    draft.
 2. Comparing: a session exists, `currentQuestion` exists, and no final ranking
    is available.
-3. Ready: the final ranking is unique but still hidden behind the explicit
-   “Rangliste anzeigen” action.
-4. Revealed: the ordered result is visible and can be copied.
+3. Result: the final ranking is unique, immediately visible, and can be copied.
 
-The reveal flag is intentionally ephemeral presentation state. Reloading a
-completed session returns to the ready phase. Undo from ready or revealed returns
-to the exact preceding comparison.
+The transition from comparing to result uses a brief, non-blocking reveal
+animation that is disabled when reduced motion is preferred. Reloading a
+completed session shows the result. Undo from the result returns to the exact
+preceding comparison.
 
 Changing the list after at least one decision requires confirmation. Resetting
 clears the session and its stored decisions but keeps the labels in the draft.
@@ -115,13 +114,13 @@ storage are separate conditions and must not be presented as successful restore.
 
 - `src/main.tsx` owns the React root, Strict Mode, and application-wide
   providers if one becomes necessary.
-- `src/App.tsx` composes the four phases, owns the canonical session and
-  transient reveal state, and synchronizes the session with local storage.
+- `src/App.tsx` composes the three phases, owns the canonical session, and
+  synchronizes it with local storage.
 - `src/components/ListSetup.tsx` owns input feedback and submission.
 - `src/components/ComparisonPanel.tsx` owns the current binary choice,
   keyboard shortcuts, progress display, undo, and list-change action.
-- `src/components/RankingResult.tsx` owns the ready gate, semantic ordered
-  result, clipboard feedback, and result actions.
+- `src/components/RankingResult.tsx` owns the semantic ordered result,
+  clipboard feedback, and result actions.
 - `src/components/RankingGraph.tsx` is the only imperative G6 boundary. It
   dynamically loads G6, serializes renders, responds to size and color-scheme
   changes, and destroys its graph safely under React Strict Mode.
@@ -237,7 +236,7 @@ well-named, focused, and consistent with the existing project style.
   not trigger shortcuts while the user is typing in an editable control.
 - Do not expose a ranking before the uniqueness gate. The graph may look ordered
   before the domain can prove a single total order.
-- Keep the graph visible throughout comparing, ready, and revealed phases. On
+- Keep the graph visible throughout comparing and result phases. On
   narrow screens the comparison/result content appears before the graph.
 - Treat the interface as a polished product, even while it is small. Favor clear
   hierarchy, restrained styling, balanced spacing, and predictable behavior.
@@ -245,6 +244,8 @@ well-named, focused, and consistent with the existing project style.
   and touch, expose an accessible name, and show a visible focus state.
 - Consider responsive layouts, zoom, readable contrast, reduced motion, and
   light and dark color schemes when they are relevant to the changed interface.
+- Keep animations brief and non-blocking. Controls and content must not require
+  waiting for an animation before they become usable.
 - Do not automatically add cards, rounded containers, gradients, shadows,
   animations, or custom controls. Visual treatment must serve a structural or
   semantic purpose.
@@ -305,8 +306,8 @@ Verify in proportion to the change, starting with the narrowest relevant check.
   coverage when interaction complexity or a regression justifies it; do not
   substitute source inspection for browser verification of visual behavior.
 - For graph or layout changes, exercise at least setup, first decision, a dense
-  intermediate graph, ready, and revealed states. Inspect a narrow and wide
-  viewport, reduced motion where relevant, and the browser console.
+  intermediate graph, and result state. Inspect a narrow and wide viewport,
+  reduced motion where relevant, and the browser console.
 - Add or update focused tests for non-trivial logic and regressions. Test
   observable behavior and domain contracts, not private implementation details.
 - Do not claim a test, build, or visual check ran when it did not. Respect an

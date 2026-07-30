@@ -71,6 +71,12 @@
   text-wrap: balance;
 }
 
+.comparison-panel__question h1:focus-visible {
+  border-radius: 0.1rem;
+  outline: 2px solid var(--accent);
+  outline-offset: 0.2rem;
+}
+
 .comparison-panel__hint {
   margin: 0.85rem 0 0;
   color: var(--text-muted);
@@ -121,15 +127,15 @@
     box-shadow 160ms ease;
 }
 
-.choice-button:hover {
-  background: var(--choice-hover);
-  box-shadow: inset 0 -3px 0 var(--accent);
-}
-
 .choice-button:focus-visible {
   z-index: 3;
   outline: 2px solid var(--accent);
   outline-offset: -2px;
+  box-shadow: inset 0 -3px 0 var(--accent);
+}
+
+.choice-button:active {
+  background: var(--choice-hover);
   box-shadow: inset 0 -3px 0 var(--accent);
 }
 
@@ -187,6 +193,17 @@
   max-width: 35rem;
 }
 
+.comparison-panel__footer .text-action {
+  min-height: 2.75rem;
+  padding-inline: 0.5rem;
+  border-radius: 0.1rem;
+}
+
+.comparison-panel__footer .text-action:active:not(:disabled) {
+  color: var(--text-strong);
+  background: var(--surface-hover);
+}
+
 .storage-warning {
   max-width: 35rem;
   margin: 0.8rem 0 0;
@@ -203,6 +220,19 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .choice-button:hover {
+    background: var(--choice-hover);
+    box-shadow: inset 0 -3px 0 var(--accent);
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .comparison-panel__footer .text-action:hover:not(:disabled) {
+    color: var(--text-muted);
   }
 }
 
@@ -239,22 +269,27 @@
 @media (max-width: 40rem) {
   .comparison-panel {
     align-items: stretch;
-    padding: 0.5rem 0 1.5rem;
+    padding: 0.25rem 0 1rem;
   }
 
   .comparison-panel__question {
-    padding: 2.75rem 0;
+    padding: clamp(1.5rem, 4.5svh, 2.25rem) 0;
   }
 
   .comparison-panel__question h1 {
-    font-size: clamp(2.45rem, 13vw, 3.7rem);
+    font-size: clamp(2.35rem, 11vw, 3.25rem);
+  }
+
+  .comparison-panel__hint {
+    margin-top: 0.65rem;
+    line-height: 1.4;
   }
 
   .choice-stack {
     grid-template-columns: 1fr;
-    grid-template-rows: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(6.75rem, 1fr));
     gap: 0;
-    margin-top: 1.75rem;
+    margin-top: 1.25rem;
   }
 
   .choice-stack::before {
@@ -267,10 +302,22 @@
   }
 
   .choice-button {
-    min-height: 7.25rem;
+    min-height: 6.75rem;
     grid-template-columns: auto 1fr auto;
     align-content: center;
     align-items: center;
+    padding-block: 1rem;
+  }
+
+  .comparison-panel__footer {
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 40rem), (hover: none), (pointer: coarse) {
+  .choice-button__key,
+  .keyboard-note {
+    display: none;
   }
 }
 

@@ -22,6 +22,7 @@ export interface AppCopy {
     readonly openGraphLocale: string
   }
   readonly header: {
+    readonly settings: string
     readonly stored: string
     readonly temporary: string
     readonly tagline: string
@@ -90,13 +91,8 @@ export interface AppCopy {
     ) => string
   }
   readonly result: {
-    readonly readyKicker: string
-    readonly readyTitle: string
-    readonly readyDescription: (decisionCount: number) => string
-    readonly reveal: string
     readonly changeLastDecision: string
     readonly newRanking: string
-    readonly readyAnnouncement: string
     readonly resultKicker: string
     readonly resultTitle: string
     readonly decisionCount: (count: number) => string
@@ -113,6 +109,8 @@ export interface AppCopy {
     readonly zoomOut: string
     readonly zoomIn: string
     readonly fit: string
+    readonly expand: string
+    readonly collapse: string
     readonly emptyMessage: string
     readonly renderError: string
     readonly legend: string
@@ -157,6 +155,7 @@ export const copyByLanguage = {
       openGraphLocale: 'de_DE',
     },
     header: {
+      settings: 'Einstellungen',
       stored: 'Lokal gespeichert',
       temporary: 'Nur temporär',
       tagline: 'Direkt vergleichen. Klar entscheiden.',
@@ -229,15 +228,8 @@ export const copyByLanguage = {
         `Vergleich ${decisionNumber}: ${leftLabel} oder ${rightLabel}.`,
     },
     result: {
-      readyKicker: 'Geschafft',
-      readyTitle: 'Deine Rangfolge ist eindeutig.',
-      readyDescription: (decisionCount) =>
-        `Nach ${decisionCount} ${germanDecisionLabel(decisionCount)} lässt sich jeder Eintrag klar einordnen. Jetzt kannst du das Ergebnis aufdecken.`,
-      reveal: 'Rangliste anzeigen',
       changeLastDecision: 'Letzte Entscheidung ändern',
       newRanking: 'Neues Ranking',
-      readyAnnouncement:
-        'Die Rangfolge ist eindeutig. Du kannst die Rangliste jetzt anzeigen.',
       resultKicker: 'Dein Ergebnis',
       resultTitle: 'Deine Rangliste',
       decisionCount: (count) => `${count} ${germanDecisionLabel(count)}`,
@@ -255,6 +247,8 @@ export const copyByLanguage = {
       zoomOut: 'Graph verkleinern',
       zoomIn: 'Graph vergrößern',
       fit: 'Einpassen',
+      expand: 'Große Graphansicht öffnen',
+      collapse: 'Kompakte Graphansicht anzeigen',
       emptyMessage: 'Dein Graph entsteht mit der ersten Entscheidung.',
       renderError:
         'Der Graph konnte gerade nicht dargestellt werden. Deine Entscheidungen bleiben gespeichert.',
@@ -291,6 +285,7 @@ export const copyByLanguage = {
       openGraphLocale: 'en_US',
     },
     header: {
+      settings: 'Settings',
       stored: 'Saved locally',
       temporary: 'Temporary only',
       tagline: 'Compare directly. Decide clearly.',
@@ -362,15 +357,8 @@ export const copyByLanguage = {
         `Comparison ${decisionNumber}: ${leftLabel} or ${rightLabel}.`,
     },
     result: {
-      readyKicker: 'Done',
-      readyTitle: 'Your ranking is uniquely determined.',
-      readyDescription: (decisionCount) =>
-        `After ${decisionCount} ${englishDecisionLabel(decisionCount)}, every item has a clear place. You can now reveal the result.`,
-      reveal: 'Reveal ranking',
       changeLastDecision: 'Change last decision',
       newRanking: 'New ranking',
-      readyAnnouncement:
-        'The ranking is uniquely determined. You can reveal it now.',
       resultKicker: 'Your result',
       resultTitle: 'Your ranking',
       decisionCount: (count) => `${count} ${englishDecisionLabel(count)}`,
@@ -388,6 +376,8 @@ export const copyByLanguage = {
       zoomOut: 'Zoom out',
       zoomIn: 'Zoom in',
       fit: 'Fit to view',
+      expand: 'Open large graph view',
+      collapse: 'Show compact graph view',
       emptyMessage: 'Your graph will appear after the first decision.',
       renderError:
         'The graph could not be displayed. Your decisions are still saved.',
