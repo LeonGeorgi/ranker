@@ -1,4 +1,5 @@
 export const RANKING_SESSION_VERSION = 1
+export const RANKING_HISTORY_VERSION = 1
 export const MAX_RANKING_ITEMS = 50
 export const MAX_RANKING_LABEL_LENGTH = 120
 
@@ -22,6 +23,17 @@ export interface RankingSession {
   readonly seed: number
   readonly items: readonly RankingItem[]
   readonly decisions: readonly RankingDecision[]
+}
+
+export interface RankingHistoryEntry {
+  readonly id: string
+  readonly savedAt: number
+  readonly session: RankingSession
+}
+
+export interface RankingHistory {
+  readonly version: typeof RANKING_HISTORY_VERSION
+  readonly entries: readonly RankingHistoryEntry[]
 }
 
 export type ComparisonKind = 'discovery-pair' | 'merge'

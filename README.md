@@ -3,7 +3,8 @@
 Ranker erstellt aus einfachen Paarvergleichen eine eindeutige persönliche
 Rangliste. Die Anwendung zeigt bereits verglichene Einträge als gerichteten
 Graphen, speichert den Fortschritt lokal und lässt Entscheidungen rückgängig
-machen.
+machen. Abgeschlossene Ranglisten bleiben beim Start eines neuen Rankings im
+lokalen Verlauf erhalten.
 
 Die Oberfläche ist auf Deutsch und Englisch verfügbar, startet standardmäßig
 auf Deutsch und merkt sich die gewählte Sprache separat vom Ranking lokal im
@@ -51,8 +52,13 @@ Produktions-Build aus.
   die aktuelle Listengröße.
 - Die Ergebnisansicht wird erst freigegeben, wenn der Graph genau eine
   vollständige Rangfolge zulässt.
+- Beim Verlassen einer abgeschlossenen Rangliste wird die vollständige Session
+  im lokalen Verlauf archiviert. Der Verlauf ist über die Toolbar erreichbar.
 - Liste, Zufalls-Seed und Entscheidungen liegen versioniert im `localStorage`.
   Der aktuelle Vergleich lässt sich daraus deterministisch rekonstruieren.
+- Laufende Session und Verlauf verwenden getrennte versionierte
+  `localStorage`-Einträge, damit das Zurücksetzen eines Rankings den Verlauf
+  nicht löscht.
 
 ## Ranking-Simulation
 
@@ -73,7 +79,7 @@ Optional lassen sich Umfang, Listenlängen und Seed anpassen, zum Beispiel mit
 - `src/App.tsx` verbindet Sitzungszustand, lokale Speicherung und Ansichten.
 - `src/components/` enthält die fokussierten Oberflächenkomponenten.
 - `src/ranking/` enthält den deterministischen Ranking-Kern, Validierung,
-  Graphableitung und Speicherung sowie die zugehörigen Tests.
+  Graphableitung, Verlauf und Speicherung sowie die zugehörigen Tests.
 - `src/index.css` definiert globale Grundlagen und Design-Tokens.
 - `src/App.css` definiert den responsiven Arbeitsbereich.
 - `public/og.png` ist das Vorschaubild für geteilte Links.

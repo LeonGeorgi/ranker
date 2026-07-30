@@ -51,6 +51,22 @@ describe('interface copy', () => {
     )
   })
 
+  it('localizes history labels and counts', () => {
+    expect(copyByLanguage.de.history.openLabel(0)).toBe('Verlauf öffnen')
+    expect(copyByLanguage.de.history.openLabel(1)).toBe(
+      'Verlauf öffnen, 1 gespeichertes Ranking',
+    )
+    expect(copyByLanguage.en.history.openLabel(2)).toBe(
+      'Open history, 2 saved rankings',
+    )
+    expect(copyByLanguage.de.history.entrySummary(2, 1)).toBe(
+      '2 Einträge · 1 Entscheidung',
+    )
+    expect(copyByLanguage.en.history.entrySummary(1, 2)).toBe(
+      '1 item · 2 decisions',
+    )
+  })
+
   it('uses criterion-neutral wording for comparisons', () => {
     expect(copyByLanguage.de.setup.title).toBe('Was gewinnt?')
     expect(copyByLanguage.de.comparison.title).toBe('Was gewinnt?')

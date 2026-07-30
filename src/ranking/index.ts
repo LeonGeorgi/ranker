@@ -25,13 +25,24 @@ export {
   getUniqueRanking,
 } from './graph.ts'
 export {
+  addRankingHistoryEntry,
+  createCompletedRankingHistoryEntry,
+  createEmptyRankingHistory,
+  deserializeRankingHistory,
+  parseRankingHistory,
+  serializeRankingHistory,
+} from './history.ts'
+export {
   MAX_RANKING_ITEMS,
   MAX_RANKING_LABEL_LENGTH,
+  RANKING_HISTORY_VERSION,
   RANKING_SESSION_VERSION,
   type ComparisonEdge,
   type ComparisonKind,
   type RankingDecision,
   type RankingGraph,
+  type RankingHistory,
+  type RankingHistoryEntry,
   type RankingItem,
   type RankingProgress,
   type RankingQuestion,

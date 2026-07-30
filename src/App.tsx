@@ -10,6 +10,7 @@ import './App.css'
 import { ComparisonPanel } from './components/ComparisonPanel.tsx'
 import { ConfirmResetDialog } from './components/ConfirmResetDialog.tsx'
 import { ListSetup } from './components/ListSetup.tsx'
+import { RankingHistoryDialog } from './components/RankingHistoryDialog.tsx'
 import { RankingGraph } from './components/RankingGraph.tsx'
 import { RankingResult } from './components/RankingResult.tsx'
 import { ThemeSwitcher } from './components/ThemeSwitcher.tsx'
@@ -24,17 +25,23 @@ import {
   writeStoredLanguage,
 } from './language-storage.ts'
 import {
+  addRankingHistoryEntry,
   answerRankingQuestion,
+  createCompletedRankingHistoryEntry,
+  createEmptyRankingHistory,
   createRankingSession,
   deriveRankingSnapshot,
   RankingSessionError,
   undoLastRankingDecision,
   type RankingGraph as RankingGraphData,
+  type RankingHistory,
   type RankingSession,
 } from './ranking/index.ts'
 import {
   clearStoredRankingSession,
+  readStoredRankingHistory,
   readStoredRankingSession,
+  writeStoredRankingHistory,
   writeStoredRankingSession,
   type StoredSessionIssue,
 } from './ranking/storage.ts'
@@ -49,9 +56,11 @@ import {
 const EMPTY_GRAPH: RankingGraphData = { nodes: [], edges: [] }
 
 interface InitialAppState {
-  readonly issue: StoredSessionIssue
+  readonly history: RankingHistory
+  readonly historyIssue: StoredSessionIssue
   readonly language: Language
   readonly session: RankingSession | null
+  readonly sessionIssue: StoredSessionIssue
   readonly theme: ThemePreference
 }
 
@@ -60,20 +69,63 @@ type StorageWarningCode =
   | 'write-failed'
   | null
 
+interface HistoryButtonProps {
+  readonly copy: AppCopy['history']
+  readonly count: number
+  readonly isDialogOpen: boolean
+  readonly onOpen: () => void
+}
+
+function HistoryButton({
+  copy,
+  count,
+  isDialogOpen,
+  onOpen,
+}: HistoryButtonProps) {
+  const label = copy.openLabel(count)
+
+  return (
+    <button
+      type="button"
+      className="history-button"
+      aria-controls="ranking-history-dialog"
+      aria-expanded={isDialogOpen}
+      aria-haspopup="dialog"
+      aria-label={label}
+      title={label}
+      onClick={onOpen}
+    >
+      <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <circle cx="10" cy="10" r="7" />
+        <path d="M10 5.75V10l2.75 1.75" />
+        <path d="M4.75 4.75 3 4.6l.15 1.75" />
+      </svg>
+      <span className="history-button__label">{copy.open}</span>
+      {count > 0 && <span className="history-button__count">{count}</span>}
+    </button>
+  )
+}
+
 function loadInitialAppState(): InitialAppState {
   try {
     const storage = window.localStorage
+    const storedHistory = readStoredRankingHistory(storage)
     const storedSession = readStoredRankingSession(storage)
     return {
-      ...storedSession,
+      history: storedHistory.history,
+      historyIssue: storedHistory.issue,
       language: readStoredLanguage(storage),
+      session: storedSession.session,
+      sessionIssue: storedSession.issue,
       theme: readStoredTheme(storage),
     }
   } catch {
     return {
-      issue: 'unavailable',
+      history: createEmptyRankingHistory(),
+      historyIssue: 'unavailable',
       language: DEFAULT_LANGUAGE,
       session: null,
+      sessionIssue: 'unavailable',
       theme: DEFAULT_THEME,
     }
   }
@@ -135,6 +187,21 @@ function getStorageWarningMessage(
   return null
 }
 
+function combineStorageWarningCodes(
+  ...codes: readonly StorageWarningCode[]
+): StorageWarningCode {
+  if (codes.includes('unavailable')) {
+    return 'unavailable'
+  }
+  if (codes.includes('write-failed')) {
+    return 'write-failed'
+  }
+  if (codes.includes('invalid')) {
+    return 'invalid'
+  }
+  return null
+}
+
 function setMetaContent(selector: string, content: string): void {
   document
     .querySelector<HTMLMetaElement>(selector)
@@ -145,6 +212,7 @@ function App() {
   const [initialState] = useState(loadInitialAppState)
   const [language, setLanguage] = useState<Language>(initialState.language)
   const [theme, setTheme] = useState<ThemePreference>(initialState.theme)
+  const [history, setHistory] = useState<RankingHistory>(initialState.history)
   const [session, setSession] = useState<RankingSession | null>(
     initialState.session,
   )
@@ -152,13 +220,20 @@ function App() {
     initialState.session?.items.map((item) => item.label).join('\n') ?? '',
   )
   const [isResultRevealed, setIsResultRevealed] = useState(false)
+  const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false)
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false)
-  const [storageWarningCode, setStorageWarningCode] =
-    useState<StorageWarningCode>(initialState.issue)
+  const [historyStorageWarningCode, setHistoryStorageWarningCode] =
+    useState<StorageWarningCode>(initialState.historyIssue)
+  const [sessionStorageWarningCode, setSessionStorageWarningCode] =
+    useState<StorageWarningCode>(initialState.sessionIssue)
   const prefersDarkMode = useSystemPrefersDarkMode()
   const colorScheme: ColorScheme =
     theme === 'system' ? (prefersDarkMode ? 'dark' : 'light') : theme
   const copy = copyByLanguage[language]
+  const storageWarningCode = combineStorageWarningCodes(
+    sessionStorageWarningCode,
+    historyStorageWarningCode,
+  )
   const storageWarning = getStorageWarningMessage(
     storageWarningCode,
     copy.storage,
@@ -222,7 +297,7 @@ function App() {
           : writeStoredRankingSession(window.localStorage, session)
 
       if (!isCancelled) {
-        setStorageWarningCode(wasStored ? null : 'write-failed')
+        setSessionStorageWarningCode(wasStored ? null : 'write-failed')
       }
     })
 
@@ -287,6 +362,26 @@ function App() {
   const resetRanking = () => {
     if (session !== null) {
       setDraft(session.items.map((item) => item.label).join('\n'))
+
+      if (snapshot !== null && snapshot.finalRanking !== null) {
+        const historyEntry = createCompletedRankingHistoryEntry(
+          session,
+          window.crypto.randomUUID(),
+          Date.now(),
+        )
+        if (historyEntry !== null) {
+          const updatedHistory = addRankingHistoryEntry(
+            history,
+            historyEntry,
+          )
+          setHistory(updatedHistory)
+          setHistoryStorageWarningCode(
+            writeStoredRankingHistory(window.localStorage, updatedHistory)
+              ? null
+              : 'write-failed',
+          )
+        }
+      }
     }
     setSession(null)
     setIsResultRevealed(false)
@@ -327,6 +422,13 @@ function App() {
               copy.header.tagline
             )}
           </div>
+
+          <HistoryButton
+            copy={copy.history}
+            count={history.entries.length}
+            isDialogOpen={isHistoryDialogOpen}
+            onOpen={() => setIsHistoryDialogOpen(true)}
+          />
 
           <ThemeSwitcher
             copy={copy.theme}
@@ -380,6 +482,9 @@ function App() {
           />
         ) : snapshot.finalRanking === null ? (
           <ComparisonPanel
+            areKeyboardShortcutsEnabled={
+              !isHistoryDialogOpen && !isResetDialogOpen
+            }
             language={language}
             snapshot={snapshot}
             storageWarning={storageWarning}
@@ -408,6 +513,13 @@ function App() {
           />
         )}
       </main>
+
+      <RankingHistoryDialog
+        history={history.entries}
+        isOpen={isHistoryDialogOpen}
+        language={language}
+        onClose={() => setIsHistoryDialogOpen(false)}
+      />
 
       <ConfirmResetDialog
         isOpen={isResetDialogOpen}

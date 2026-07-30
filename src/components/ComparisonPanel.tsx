@@ -4,6 +4,7 @@ import type { RankingSnapshot } from '../ranking/types.ts'
 import './ComparisonPanel.css'
 
 interface ComparisonPanelProps {
+  readonly areKeyboardShortcutsEnabled: boolean
   readonly language: Language
   readonly onChoose: (preferredItemId: string, questionId: string) => void
   readonly onEditList: () => void
@@ -22,6 +23,7 @@ function isTypingTarget(target: EventTarget | null): boolean {
 }
 
 export function ComparisonPanel({
+  areKeyboardShortcutsEnabled,
   language,
   onChoose,
   onEditList,
@@ -32,7 +34,7 @@ export function ComparisonPanel({
   const question = snapshot.currentQuestion
 
   useEffect(() => {
-    if (question === null) {
+    if (question === null || !areKeyboardShortcutsEnabled) {
       return
     }
 
@@ -52,7 +54,7 @@ export function ComparisonPanel({
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [onChoose, question])
+  }, [areKeyboardShortcutsEnabled, onChoose, question])
 
   if (question === null) {
     return null

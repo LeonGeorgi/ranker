@@ -70,6 +70,71 @@
   gap: 1rem;
 }
 
+.history-button {
+  position: relative;
+  display: inline-flex;
+  min-height: 2.2rem;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.2rem;
+  outline: none;
+  color: var(--text-faint);
+  background: transparent;
+  font: inherit;
+  font-family: var(--font-data);
+  font-size: 0.65rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.history-button svg {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 1.35;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+}
+
+.history-button:hover {
+  border-color: var(--border-hover);
+  color: var(--text-strong);
+  background: var(--surface-hover);
+}
+
+.history-button:active {
+  border-color: var(--accent);
+  background: var(--choice-hover);
+}
+
+.history-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.history-button__count {
+  position: absolute;
+  top: -0.35rem;
+  right: -0.35rem;
+  display: grid;
+  min-width: 1.15rem;
+  height: 1.15rem;
+  place-items: center;
+  padding: 0 0.2rem;
+  border: 2px solid var(--surface-page);
+  border-radius: 999px;
+  color: var(--on-accent);
+  background: var(--accent-solid);
+  font-family: var(--font-data);
+  font-size: 0.54rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
 .theme-switch,
 .language-switch {
   display: inline-flex;
@@ -290,6 +355,16 @@
     gap: 0.5rem;
   }
 
+  .history-button {
+    width: 2.2rem;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .history-button__label {
+    display: none;
+  }
+
   .app-workspace {
     gap: 1rem;
     padding: 0 1rem 1rem;
@@ -304,10 +379,13 @@
 
   .app-header__tools {
     width: 100%;
+    flex-wrap: wrap;
     justify-content: space-between;
+    row-gap: 0.5rem;
   }
 
   .app-header__status {
+    width: 100%;
     max-width: none;
     justify-content: flex-start;
     text-align: left;

@@ -26,6 +26,19 @@ export interface AppCopy {
     readonly temporary: string
     readonly tagline: string
   }
+  readonly history: {
+    readonly open: string
+    readonly openLabel: (count: number) => string
+    readonly kicker: string
+    readonly title: string
+    readonly empty: string
+    readonly savedOn: (formattedDate: string) => string
+    readonly entrySummary: (
+      itemCount: number,
+      decisionCount: number,
+    ) => string
+    readonly close: string
+  }
   readonly storage: {
     readonly invalid: string
     readonly unavailable: string
@@ -148,10 +161,25 @@ export const copyByLanguage = {
       temporary: 'Nur temporär',
       tagline: 'Direkt vergleichen. Klar entscheiden.',
     },
+    history: {
+      open: 'Verlauf',
+      openLabel: (count) =>
+        count === 0
+          ? 'Verlauf öffnen'
+          : `Verlauf öffnen, ${count} ${count === 1 ? 'gespeichertes Ranking' : 'gespeicherte Rankings'}`,
+      kicker: 'Gespeicherte Rankings',
+      title: 'Dein Verlauf',
+      empty: 'Noch keine abgeschlossenen Rankings gespeichert.',
+      savedOn: (formattedDate) => `Ranking vom ${formattedDate}`,
+      entrySummary: (itemCount, decisionCount) =>
+        `${itemCount} ${itemCount === 1 ? 'Eintrag' : 'Einträge'} · ${decisionCount} ${germanDecisionLabel(decisionCount)}`,
+      close: 'Schließen',
+    },
     storage: {
-      invalid: 'Der frühere Speicherstand war beschädigt und wurde ignoriert.',
+      invalid:
+        'Ein lokal gespeichertes Ranking war beschädigt und wurde ignoriert.',
       unavailable: 'Lokales Speichern ist in diesem Browser nicht verfügbar.',
-      writeFailed: 'Dein Fortschritt konnte nicht lokal gespeichert werden.',
+      writeFailed: 'Deine Daten konnten nicht lokal gespeichert werden.',
     },
     setup: {
       kicker: 'Neue Rangliste',
@@ -267,10 +295,25 @@ export const copyByLanguage = {
       temporary: 'Temporary only',
       tagline: 'Compare directly. Decide clearly.',
     },
+    history: {
+      open: 'History',
+      openLabel: (count) =>
+        count === 0
+          ? 'Open history'
+          : `Open history, ${count} saved ${count === 1 ? 'ranking' : 'rankings'}`,
+      kicker: 'Saved rankings',
+      title: 'Your history',
+      empty: 'No completed rankings have been saved yet.',
+      savedOn: (formattedDate) => `Ranking from ${formattedDate}`,
+      entrySummary: (itemCount, decisionCount) =>
+        `${itemCount} ${itemCount === 1 ? 'item' : 'items'} · ${decisionCount} ${englishDecisionLabel(decisionCount)}`,
+      close: 'Close',
+    },
     storage: {
-      invalid: 'The previous saved session was corrupted and has been ignored.',
+      invalid:
+        'A locally saved ranking was corrupted and has been ignored.',
       unavailable: 'Local storage is not available in this browser.',
-      writeFailed: 'Your progress could not be saved locally.',
+      writeFailed: 'Your data could not be saved locally.',
     },
     setup: {
       kicker: 'New ranking',
