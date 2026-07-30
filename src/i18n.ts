@@ -1,6 +1,6 @@
 export type Language = 'de' | 'en'
 
-export const DEFAULT_LANGUAGE: Language = 'de'
+export const DEFAULT_LANGUAGE: Language = 'en'
 
 export interface AppCopy {
   readonly language: {

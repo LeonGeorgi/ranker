@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  getBrowserPreferredLanguage,
   LANGUAGE_STORAGE_KEY,
   readStoredLanguage,
   writeStoredLanguage,
@@ -33,13 +34,34 @@ describe('language storage', () => {
     expect(LANGUAGE_STORAGE_KEY).not.toBe(RANKING_STORAGE_KEY)
   })
 
-  it('falls back to German for missing or invalid values', () => {
+  it('falls back to English for missing or invalid values', () => {
     const storage = createMemoryStorage()
 
-    expect(readStoredLanguage(storage)).toBe('de')
+    expect(readStoredLanguage(storage)).toBe('en')
 
     storage.setItem(LANGUAGE_STORAGE_KEY, 'fr')
-    expect(readStoredLanguage(storage)).toBe('de')
+    expect(readStoredLanguage(storage)).toBe('en')
+  })
+
+  it('uses the supplied browser preference when no valid choice is stored', () => {
+    const storage = createMemoryStorage()
+
+    expect(readStoredLanguage(storage, 'de')).toBe('de')
+
+    storage.setItem(LANGUAGE_STORAGE_KEY, 'fr')
+    expect(readStoredLanguage(storage, 'de')).toBe('de')
+
+    storage.setItem(LANGUAGE_STORAGE_KEY, 'en')
+    expect(readStoredLanguage(storage, 'de')).toBe('en')
+  })
+
+  it('prefers German only for a German browser language', () => {
+    expect(getBrowserPreferredLanguage('de')).toBe('de')
+    expect(getBrowserPreferredLanguage('de-DE')).toBe('de')
+    expect(getBrowserPreferredLanguage('DE-AT')).toBe('de')
+    expect(getBrowserPreferredLanguage('en-DE')).toBe('en')
+    expect(getBrowserPreferredLanguage('fr')).toBe('en')
+    expect(getBrowserPreferredLanguage(undefined)).toBe('en')
   })
 
   it('handles unavailable storage without interrupting the app', () => {
@@ -52,7 +74,8 @@ describe('language storage', () => {
       },
     }
 
-    expect(readStoredLanguage(unavailableStorage)).toBe('de')
+    expect(readStoredLanguage(unavailableStorage)).toBe('en')
+    expect(readStoredLanguage(unavailableStorage, 'de')).toBe('de')
     expect(writeStoredLanguage(unavailableStorage, 'en')).toBe(false)
   })
 })

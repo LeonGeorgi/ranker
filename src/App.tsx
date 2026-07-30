@@ -16,11 +16,11 @@ import { RankingResult } from './components/RankingResult.tsx'
 import { ThemeSwitcher } from './components/ThemeSwitcher.tsx'
 import {
   copyByLanguage,
-  DEFAULT_LANGUAGE,
   type AppCopy,
   type Language,
 } from './i18n.ts'
 import {
+  getBrowserPreferredLanguage,
   readStoredLanguage,
   writeStoredLanguage,
 } from './language-storage.ts'
@@ -107,6 +107,10 @@ function HistoryButton({
 }
 
 function loadInitialAppState(): InitialAppState {
+  const browserLanguage = getBrowserPreferredLanguage(
+    window.navigator.language,
+  )
+
   try {
     const storage = window.localStorage
     const storedHistory = readStoredRankingHistory(storage)
@@ -114,7 +118,7 @@ function loadInitialAppState(): InitialAppState {
     return {
       history: storedHistory.history,
       historyIssue: storedHistory.issue,
-      language: readStoredLanguage(storage),
+      language: readStoredLanguage(storage, browserLanguage),
       session: storedSession.session,
       sessionIssue: storedSession.issue,
       theme: readStoredTheme(storage),
@@ -123,7 +127,7 @@ function loadInitialAppState(): InitialAppState {
     return {
       history: createEmptyRankingHistory(),
       historyIssue: 'unavailable',
-      language: DEFAULT_LANGUAGE,
+      language: browserLanguage,
       session: null,
       sessionIssue: 'unavailable',
       theme: DEFAULT_THEME,
@@ -444,22 +448,22 @@ function App() {
             <button
               type="button"
               className="language-switch__option"
-              lang="de"
-              aria-label={copy.language.germanLabel}
-              aria-pressed={language === 'de'}
-              onClick={() => changeLanguage('de')}
-            >
-              DE
-            </button>
-            <button
-              type="button"
-              className="language-switch__option"
               lang="en"
               aria-label={copy.language.englishLabel}
               aria-pressed={language === 'en'}
               onClick={() => changeLanguage('en')}
             >
               EN
+            </button>
+            <button
+              type="button"
+              className="language-switch__option"
+              lang="de"
+              aria-label={copy.language.germanLabel}
+              aria-pressed={language === 'de'}
+              onClick={() => changeLanguage('de')}
+            >
+              DE
             </button>
           </div>
         </div>

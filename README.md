@@ -6,10 +6,11 @@ Graphen, speichert den Fortschritt lokal und lässt Entscheidungen rückgängig
 machen. Abgeschlossene Ranglisten bleiben beim Start eines neuen Rankings im
 lokalen Verlauf erhalten.
 
-Die Oberfläche ist auf Deutsch und Englisch verfügbar, startet standardmäßig
-auf Deutsch und merkt sich die gewählte Sprache separat vom Ranking lokal im
-Browser. Das Zurücksetzen eines Rankings behält diese Präferenz bei. Die App
-funktioniert ohne Server und basiert auf React, TypeScript, Vite und AntV G6.
+Die Oberfläche ist auf Deutsch und Englisch verfügbar. Ohne gespeicherte
+Auswahl startet sie auf Englisch, bei einer deutschen Browsersprache auf
+Deutsch. Die gewählte Sprache wird separat vom Ranking lokal im Browser
+gespeichert und beim Zurücksetzen beibehalten. Die App funktioniert ohne Server
+und basiert auf React, TypeScript, Vite und AntV G6.
 
 ## Voraussetzungen
 

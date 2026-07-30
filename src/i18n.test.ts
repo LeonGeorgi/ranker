@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { copyByLanguage, DEFAULT_LANGUAGE } from './i18n.ts'
 
 describe('interface copy', () => {
-  it('keeps German as the default language', () => {
-    expect(DEFAULT_LANGUAGE).toBe('de')
+  it('uses English as the default language', () => {
+    expect(DEFAULT_LANGUAGE).toBe('en')
   })
 
   it('localizes every theme preference', () => {

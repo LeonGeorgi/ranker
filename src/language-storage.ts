@@ -10,14 +10,25 @@ export interface LanguageStorage {
   setItem(key: string, value: string): void
 }
 
-export function readStoredLanguage(storage: LanguageStorage): Language {
+export function getBrowserPreferredLanguage(
+  browserLanguage: string | undefined,
+): Language {
+  return browserLanguage?.split('-')[0]?.toLowerCase() === 'de'
+    ? 'de'
+    : DEFAULT_LANGUAGE
+}
+
+export function readStoredLanguage(
+  storage: LanguageStorage,
+  fallbackLanguage: Language = DEFAULT_LANGUAGE,
+): Language {
   try {
     const language = storage.getItem(LANGUAGE_STORAGE_KEY)
     return language === 'de' || language === 'en'
       ? language
-      : DEFAULT_LANGUAGE
+      : fallbackLanguage
   } catch {
-    return DEFAULT_LANGUAGE
+    return fallbackLanguage
   }
 }
 

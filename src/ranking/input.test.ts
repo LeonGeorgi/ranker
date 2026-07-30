@@ -13,13 +13,13 @@ describe('ranking input', () => {
   it('reports case-insensitive duplicates with their line numbers', () => {
     const analysis = analyzeRankingInput('Twix\nMars\n twix ')
 
-    expect(analysis.error).toContain('Zeile 1 und 3')
+    expect(analysis.error).toContain('lines 1 and 3')
   })
 
   it('localizes feedback without changing labels or German duplicate semantics', () => {
     const source = 'Äpfel\näPFEL'
-    const germanAnalysis = analyzeRankingInput(source)
-    const englishAnalysis = analyzeRankingInput(source, 'en')
+    const germanAnalysis = analyzeRankingInput(source, 'de')
+    const englishAnalysis = analyzeRankingInput(source)
 
     expect(englishAnalysis.labels).toEqual(germanAnalysis.labels)
     expect(germanAnalysis.error).toContain('Zeile 1 und 2')

@@ -23,9 +23,10 @@ The current product scope is deliberately narrow:
   explicit product decision.
 - The application is local-first and browser-only. It currently has no account,
   backend, sync, sharing, routing, or remote fetching.
-- The interface supports German and English, with German as the default. Keep
-  user-facing copy in `src/i18n.ts`, update both languages together, and do not
-  inline localized strings in components.
+- The interface supports German and English. English is the default unless the
+  browser's preferred language is German. Keep user-facing copy in `src/i18n.ts`,
+  update both languages together, and do not inline localized strings in
+  components.
 
 ## Ranking model and invariants
 
