@@ -1,9 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { copyByLanguage, type Language } from '../i18n.ts'
-import {
-  deriveRankingSnapshot,
-  type RankingHistoryEntry,
-} from '../ranking/index.ts'
+import type { RankingHistoryEntry } from '../ranking/index.ts'
 import './RankingHistoryDialog.css'
 
 interface RankingHistoryDialogProps {
@@ -25,11 +22,6 @@ function RankingHistoryItem({
   language,
 }: RankingHistoryItemProps) {
   const copy = copyByLanguage[language].history
-  const ranking = deriveRankingSnapshot(entry.session).finalRanking
-  if (ranking === null) {
-    return null
-  }
-
   const date = new Date(entry.savedAt)
   const formattedDate = formatDate(entry.savedAt)
 
@@ -45,14 +37,14 @@ function RankingHistoryItem({
           </time>
           <span className="history-entry__meta">
             {copy.entrySummary(
-              entry.session.items.length,
-              entry.session.decisions.length,
+              entry.ranking.length,
+              entry.decisionCount,
             )}
           </span>
         </summary>
         <ol className="history-entry__ranking">
-          {ranking.map((item) => (
-            <li key={item.id}>{item.label}</li>
+          {entry.ranking.map((label, index) => (
+            <li key={`${index}-${label}`}>{label}</li>
           ))}
         </ol>
       </details>

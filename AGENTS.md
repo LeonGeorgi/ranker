@@ -104,8 +104,16 @@ animation that is disabled when reduced motion is preferred. Reloading a
 completed session shows the result. Undo from the result returns to the exact
 preceding comparison.
 
-Changing the list after at least one decision requires confirmation. Resetting
-clears the session and its stored decisions but keeps the labels in the draft.
+Completed results are archived immediately as algorithm-independent snapshots
+containing the final labels, completion time, and decision count. Keep at most
+50 history entries and migrate legacy v1 session archives without deleting the
+legacy key. Copying a result writes the unchanged labels best-to-worst, one per
+line, so the output can be used as Ranker input again.
+
+Changing the list during an incomplete session after at least one decision
+requires confirmation. Starting a new ranking from a completed result does not.
+Resetting clears the active session and its stored decisions but keeps the
+labels in the draft.
 Storage failure is non-fatal: ranking continues in memory and the interface must
 show that progress is only temporary. Corrupt stored data and unavailable
 storage are separate conditions and must not be presented as successful restore.
@@ -131,6 +139,8 @@ storage are separate conditions and must not be presented as successful restore.
 - `src/ranking/input.ts` validates user-entered labels, keeps German
   case-folding semantics for duplicates, and selects localized feedback;
   `src/ranking/storage.ts` is the guarded local-storage boundary.
+- `src/ranking/history.ts` owns the bounded, versioned completed-result
+  snapshots and migration from legacy replay-based history.
 - `src/ranking/types.ts` defines shared domain vocabulary and persisted
   version/limit constants. `src/ranking/random.ts` is the deterministic PRNG.
 - `src/i18n.ts` is the complete German/English copy contract;
@@ -259,6 +269,8 @@ well-named, focused, and consistent with the existing project style.
   `RANKING_STORAGE_KEY` (`ranker.ranking-session.v1`). Change version,
   validation, migration/invalidating behavior, key, tests, and documentation
   together.
+- Completed history uses its own version and storage key. A schema change must
+  update both together and preserve or explicitly migrate existing entries.
 - Treat local storage as untrusted and failure-prone. Reading, writing, and
   clearing must remain exception-safe; never let persistence failure stop an
   in-memory ranking.

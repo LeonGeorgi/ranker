@@ -24,6 +24,7 @@ export {
   countVisibleComponents,
   getUniqueRanking,
 } from './graph.ts'
+export { formatRankingForClipboard } from './output.ts'
 export {
   addRankingHistoryEntry,
   createCompletedRankingHistoryEntry,
@@ -34,6 +35,7 @@ export {
 } from './history.ts'
 export {
   MAX_RANKING_ITEMS,
+  MAX_RANKING_HISTORY_ENTRIES,
   MAX_RANKING_LABEL_LENGTH,
   RANKING_HISTORY_VERSION,
   RANKING_SESSION_VERSION,

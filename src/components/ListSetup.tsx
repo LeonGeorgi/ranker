@@ -88,43 +88,6 @@ export function ListSetup({
       </div>
 
       <form className="setup-form" onSubmit={handleSubmit} noValidate>
-        <div className="setup-examples">
-          <p id="ranking-examples-label" className="setup-examples__title">
-            {copy.examplesLabel}
-          </p>
-          <div
-            className="setup-examples__choices"
-            role="group"
-            aria-labelledby="ranking-examples-label"
-          >
-            {exampleIds.map((exampleId) => {
-              const example = examples[exampleId]
-
-              return (
-                <button
-                  key={exampleId}
-                  type="button"
-                  className="setup-examples__choice"
-                  aria-label={copy.insertExample(example.title)}
-                  onClick={() => insertExample(exampleId)}
-                >
-                  {example.title}
-                </button>
-              )
-            })}
-          </div>
-          <button
-            type="button"
-            className="text-action setup-examples__replace"
-            onClick={() =>
-              setExampleIds((currentIds) => pickRankingExampleIds(currentIds))
-            }
-          >
-            <span aria-hidden="true">↻</span>
-            {copy.replaceExamples}
-          </button>
-        </div>
-
         <div className="setup-form__custom-list">
           <div className="setup-form__label-row">
             <label htmlFor="ranking-items">{copy.listLabel}</label>
@@ -166,14 +129,57 @@ export function ListSetup({
           >
             <span className="setup-form__submit-copy">
               <span>{copy.start}</span>
-              <span className="setup-form__submit-estimate">
-                {copy.expectedComparisons(expectedDecisionCount)}
-              </span>
+              {analysis.error === null && (
+                <span className="setup-form__submit-estimate">
+                  {copy.expectedComparisons(expectedDecisionCount)}
+                </span>
+              )}
             </span>
             <span className="setup-form__submit-arrow" aria-hidden="true">
               →
             </span>
           </button>
+        </div>
+
+        <div className="setup-examples">
+          <div className="setup-examples__header">
+            <p id="ranking-examples-label" className="setup-examples__title">
+              {copy.examplesLabel}
+            </p>
+            <button
+              type="button"
+              className="text-action setup-examples__replace"
+              onClick={() =>
+                setExampleIds((currentIds) =>
+                  pickRankingExampleIds(currentIds),
+                )
+              }
+            >
+              <span aria-hidden="true">↻</span>
+              {copy.replaceExamples}
+            </button>
+          </div>
+          <div
+            className="setup-examples__choices"
+            role="group"
+            aria-labelledby="ranking-examples-label"
+          >
+            {exampleIds.map((exampleId) => {
+              const example = examples[exampleId]
+
+              return (
+                <button
+                  key={exampleId}
+                  type="button"
+                  className="setup-examples__choice"
+                  aria-label={copy.insertExample(example.title)}
+                  onClick={() => insertExample(exampleId)}
+                >
+                  {example.title}
+                </button>
+              )
+            })}
+          </div>
         </div>
 
         <div className="setup-form__status">

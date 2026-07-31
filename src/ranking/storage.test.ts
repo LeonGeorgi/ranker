@@ -11,6 +11,7 @@ import {
 } from './history.ts'
 import {
   clearStoredRankingSession,
+  LEGACY_RANKING_HISTORY_STORAGE_KEY,
   readStoredRankingHistory,
   readStoredRankingSession,
   RANKING_HISTORY_STORAGE_KEY,
@@ -109,6 +110,90 @@ describe('ranking storage', () => {
       history,
       issue: null,
     })
+  })
+
+  it('migrates v1 history to the v2 key without deleting the legacy value', () => {
+    const storage = createMemoryStorage()
+    const completedSession = completeTwoItemSession(['Past A', 'Past B'], 12)
+    const serializedLegacyHistory = JSON.stringify({
+      version: 1,
+      entries: [
+        {
+          id: 'legacy-ranking',
+          savedAt: 3_000,
+          session: completedSession,
+        },
+      ],
+    })
+    storage.setItem(
+      LEGACY_RANKING_HISTORY_STORAGE_KEY,
+      serializedLegacyHistory,
+    )
+
+    const result = readStoredRankingHistory(storage)
+
+    expect(result).toEqual({
+      history: {
+        version: 2,
+        entries: [
+          {
+            id: 'legacy-ranking',
+            savedAt: 3_000,
+            ranking: deriveRankingSnapshot(
+              completedSession,
+            ).finalRanking?.map((item) => item.label),
+            decisionCount: completedSession.decisions.length,
+          },
+        ],
+      },
+      issue: null,
+    })
+    expect(storage.getItem(LEGACY_RANKING_HISTORY_STORAGE_KEY)).toBe(
+      serializedLegacyHistory,
+    )
+    expect(storage.getItem(RANKING_HISTORY_STORAGE_KEY)).toBe(
+      JSON.stringify(result.history),
+    )
+  })
+
+  it('returns migrated v1 data when writing the v2 copy fails', () => {
+    const storage = createMemoryStorage()
+    const completedSession = completeTwoItemSession(['A', 'B'], 13)
+    const serializedLegacyHistory = JSON.stringify({
+      version: 1,
+      entries: [
+        {
+          id: 'legacy-ranking',
+          savedAt: 4_000,
+          session: completedSession,
+        },
+      ],
+    })
+    storage.setItem(
+      LEGACY_RANKING_HISTORY_STORAGE_KEY,
+      serializedLegacyHistory,
+    )
+    const failingMigrationStorage: RankingStorage = {
+      getItem: (key) => storage.getItem(key),
+      removeItem: (key) => storage.removeItem(key),
+      setItem: () => {
+        throw new Error('quota exceeded')
+      },
+    }
+
+    const result = readStoredRankingHistory(failingMigrationStorage)
+
+    expect(result.issue).toBe('unavailable')
+    expect(result.history.entries).toHaveLength(1)
+    expect(result.history.entries[0]?.ranking).toEqual(
+      deriveRankingSnapshot(completedSession).finalRanking?.map(
+        (item) => item.label,
+      ),
+    )
+    expect(storage.getItem(LEGACY_RANKING_HISTORY_STORAGE_KEY)).toBe(
+      serializedLegacyHistory,
+    )
+    expect(storage.getItem(RANKING_HISTORY_STORAGE_KEY)).toBeNull()
   })
 
   it('returns an empty history when none has been stored', () => {

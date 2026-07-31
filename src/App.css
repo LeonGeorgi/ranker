@@ -56,16 +56,6 @@
   text-transform: uppercase;
 }
 
-.app-header__status {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  color: var(--text-faint);
-  font-family: var(--font-data);
-  font-size: 0.67rem;
-  letter-spacing: 0.015em;
-}
-
 .app-header__tools {
   display: flex;
   min-width: 0;
@@ -198,13 +188,6 @@
   outline-offset: 2px;
 }
 
-.status-dot {
-  width: 0.4rem;
-  height: 0.4rem;
-  border-radius: 50%;
-  background: var(--success);
-}
-
 .mobile-settings {
   position: relative;
   z-index: 20;
@@ -278,7 +261,7 @@
 
 .app-workspace {
   display: grid;
-  grid-template-columns: minmax(24rem, 0.86fr) minmax(34rem, 1.14fr);
+  grid-template-columns: minmax(26rem, 1fr) minmax(30rem, 1fr);
   gap: 0;
   width: min(100%, 104rem);
   min-height: calc(100svh - 4rem);

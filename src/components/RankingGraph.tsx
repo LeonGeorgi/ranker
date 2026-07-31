@@ -62,28 +62,28 @@ async function createGraph(
   return new Graph({
     container,
     data: { nodes: [], edges: [] },
-    padding: 32,
+    padding: 40,
     zoomRange: [0.45, 1.55],
     animation: prefersReducedMotion
       ? false
-      : { duration: 340, easing: 'ease-out' },
+      : { duration: 280, easing: 'ease-out' },
     layout: {
       type: 'dagre',
       rankdir: 'BT',
       ranker: 'network-simplex',
-      nodesep: 30,
-      ranksep: 56,
-      nodeSize: [172, 50],
+      nodesep: 36,
+      ranksep: 64,
+      nodeSize: [176, 46],
       animation: !prefersReducedMotion,
     },
     node: {
       type: 'rect',
       style: {
-        size: [172, 50],
-        radius: 2,
+        size: [176, 46],
+        radius: 4,
         fill: palette.nodeFill,
         stroke: palette.nodeStroke,
-        lineWidth: 1.25,
+        lineWidth: 1,
         labelText: (node) => {
           const label = node.data?.label
           return typeof label === 'string' ? label : node.id
@@ -92,14 +92,14 @@ async function createGraph(
         labelFill: palette.label,
         labelFontFamily: palette.labelFontFamily,
         labelFontSize: 14,
-        labelFontWeight: 600,
-        labelMaxWidth: 144,
+        labelFontWeight: 550,
+        labelMaxWidth: 148,
         labelTextOverflow: 'ellipsis',
       },
       state: {
         current: {
           stroke: palette.accent,
-          lineWidth: 2.5,
+          lineWidth: 2,
         },
       },
       animation: prefersReducedMotion
@@ -109,19 +109,20 @@ async function createGraph(
     edge: {
       type: 'polyline',
       style: {
-        radius: 2,
+        radius: 4,
         stroke: palette.edge,
-        strokeOpacity: 0.48,
-        lineWidth: 1.25,
+        strokeOpacity: 0.4,
+        lineWidth: 1,
         endArrow: true,
         endArrowType: 'triangle',
-        endArrowSize: 8,
+        endArrowSize: 7,
+        endArrowOffset: 8,
       },
       state: {
         latest: {
           stroke: palette.edgeLatest,
-          strokeOpacity: 1,
-          lineWidth: 2.5,
+          strokeOpacity: 0.9,
+          lineWidth: 1.75,
         },
       },
       animation: prefersReducedMotion
@@ -361,46 +362,48 @@ export function RankingGraph({
           <h2 id="graph-title">{copy.title}</h2>
         </div>
 
-        <div className="graph-controls" aria-label={copy.controlsLabel}>
-          <button
-            type="button"
-            className="graph-control"
-            onClick={() => changeZoom(0.82)}
-            disabled={!hasNodes}
-            aria-label={copy.zoomOut}
+        {hasNodes && (
+          <div
+            className="graph-controls"
+            role="group"
+            aria-label={copy.controlsLabel}
           >
-            −
-          </button>
-          <button
-            type="button"
-            className="graph-control"
-            onClick={() => changeZoom(1.22)}
-            disabled={!hasNodes}
-            aria-label={copy.zoomIn}
-          >
-            +
-          </button>
-          <button
-            type="button"
-            className="graph-control graph-control--fit"
-            onClick={fitGraph}
-            disabled={!hasNodes}
-          >
-            {copy.fit}
-          </button>
-          <button
-            type="button"
-            className="graph-control graph-control--expand"
-            onClick={() => setIsExpanded((current) => !current)}
-            disabled={!hasNodes}
-            aria-controls="graph-stage"
-            aria-expanded={isExpanded}
-            aria-label={isExpanded ? copy.collapse : copy.expand}
-            title={isExpanded ? copy.collapse : copy.expand}
-          >
-            <span aria-hidden="true">↕</span>
-          </button>
-        </div>
+            <button
+              type="button"
+              className="graph-control"
+              onClick={() => changeZoom(0.82)}
+              aria-label={copy.zoomOut}
+            >
+              −
+            </button>
+            <button
+              type="button"
+              className="graph-control"
+              onClick={() => changeZoom(1.22)}
+              aria-label={copy.zoomIn}
+            >
+              +
+            </button>
+            <button
+              type="button"
+              className="graph-control graph-control--fit"
+              onClick={fitGraph}
+            >
+              {copy.fit}
+            </button>
+            <button
+              type="button"
+              className="graph-control graph-control--expand"
+              onClick={() => setIsExpanded((current) => !current)}
+              aria-controls="graph-stage"
+              aria-expanded={isExpanded}
+              aria-label={isExpanded ? copy.collapse : copy.expand}
+              title={isExpanded ? copy.collapse : copy.expand}
+            >
+              <span aria-hidden="true">↕</span>
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="graph-stage" id="graph-stage">
@@ -414,12 +417,9 @@ export function RankingGraph({
         </div>
 
         {!hasNodes && (
-          <div className="graph-empty" aria-hidden="true">
-            <span className="graph-empty__node graph-empty__node--top" />
-            <span className="graph-empty__line" />
-            <span className="graph-empty__node graph-empty__node--bottom" />
-            <p>{copy.emptyMessage}</p>
-          </div>
+          <p className="graph-empty" aria-hidden="true">
+            {copy.emptyMessage}
+          </p>
         )}
 
         {hasRenderError && (
@@ -429,9 +429,11 @@ export function RankingGraph({
         )}
       </div>
 
-      <p className="graph-legend">
-        <span aria-hidden="true">↑</span> {copy.legend}
-      </p>
+      {hasNodes && (
+        <p className="graph-legend">
+          <span aria-hidden="true">↑</span> {copy.legend}
+        </p>
+      )}
     </section>
   )
 }

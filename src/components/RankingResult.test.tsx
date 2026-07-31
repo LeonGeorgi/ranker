@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it, vi } from 'vitest'
+import { formatRankingForClipboard } from '../ranking/output.ts'
 import { RankingResult } from './RankingResult.tsx'
 
 const ranking = [
@@ -35,5 +36,11 @@ describe('RankingResult', () => {
 
   it('adds the short reveal animation only when requested', () => {
     expect(renderResult(true)).toContain('result-panel--revealing')
+  })
+
+  it('formats copied rankings as reusable one-label-per-line input', () => {
+    expect(formatRankingForClipboard(ranking)).toBe(
+      'Erster Platz\nZweiter Platz',
+    )
   })
 })

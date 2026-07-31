@@ -10,7 +10,8 @@ import {
 import type { RankingHistory, RankingSession } from './types.ts'
 
 export const RANKING_STORAGE_KEY = 'ranker.ranking-session.v1'
-export const RANKING_HISTORY_STORAGE_KEY = 'ranker.ranking-history.v1'
+export const RANKING_HISTORY_STORAGE_KEY = 'ranker.ranking-history.v2'
+export const LEGACY_RANKING_HISTORY_STORAGE_KEY = 'ranker.ranking-history.v1'
 
 export interface RankingStorage {
   getItem(key: string): string | null
@@ -74,14 +75,34 @@ export function readStoredRankingHistory(
 ): StoredHistoryResult {
   try {
     const serializedHistory = storage.getItem(RANKING_HISTORY_STORAGE_KEY)
-    if (serializedHistory === null) {
+    if (serializedHistory !== null) {
+      const history = deserializeRankingHistory(serializedHistory)
+      return history === null
+        ? { history: createEmptyRankingHistory(), issue: 'invalid' }
+        : { history, issue: null }
+    }
+
+    const serializedLegacyHistory = storage.getItem(
+      LEGACY_RANKING_HISTORY_STORAGE_KEY,
+    )
+    if (serializedLegacyHistory === null) {
       return { history: createEmptyRankingHistory(), issue: null }
     }
 
-    const history = deserializeRankingHistory(serializedHistory)
-    return history === null
-      ? { history: createEmptyRankingHistory(), issue: 'invalid' }
-      : { history, issue: null }
+    const migratedHistory = deserializeRankingHistory(serializedLegacyHistory)
+    if (migratedHistory === null) {
+      return { history: createEmptyRankingHistory(), issue: 'invalid' }
+    }
+
+    try {
+      storage.setItem(
+        RANKING_HISTORY_STORAGE_KEY,
+        serializeRankingHistory(migratedHistory),
+      )
+      return { history: migratedHistory, issue: null }
+    } catch {
+      return { history: migratedHistory, issue: 'unavailable' }
+    }
   } catch {
     return { history: createEmptyRankingHistory(), issue: 'unavailable' }
   }

@@ -64,24 +64,16 @@ export function ComparisonPanel({
   const { progress } = snapshot
   const copy = copyByLanguage[language].comparison
   const determinedPercent = Math.round(progress.determinedFraction * 100)
-  const questionKindLabel =
-    question.kind === 'discovery-pair'
-      ? copy.discoveryPair
-      : copy.merge
 
   return (
     <section className="comparison-panel" aria-labelledby="comparison-title">
       <div className="comparison-progress">
-        <div className="comparison-progress__facts">
-          <span>
-            <strong>{progress.visibleItemCount}</strong>{' '}
-            {copy.visibleItems(progress.totalItemCount)}
-          </span>
-          <span>
-            <strong>{progress.decisionCount}</strong>{' '}
-            {copy.decisionsLabel(progress.decisionCount)}
-          </span>
-        </div>
+        <p>
+          {copy.progressSummary(
+            determinedPercent,
+            progress.decisionCount,
+          )}
+        </p>
         <div
           className="comparison-progress__track"
           role="progressbar"
@@ -92,11 +84,9 @@ export function ComparisonPanel({
         >
           <span style={{ width: `${determinedPercent}%` }} />
         </div>
-        <p>{copy.determinedProgress(determinedPercent)}</p>
       </div>
 
       <div className="comparison-panel__question">
-        <p className="section-kicker">{questionKindLabel}</p>
         <h1 id="comparison-title" tabIndex={-1}>
           {copy.title}
         </h1>
@@ -109,14 +99,14 @@ export function ComparisonPanel({
             onClick={() => onChoose(question.left.id, question.id)}
             aria-keyshortcuts="1 ArrowLeft"
           >
-            <span className="choice-button__number">01</span>
+            <span className="choice-button__number" aria-hidden="true">
+              1
+            </span>
             <span className="choice-button__label">{question.left.label}</span>
             <span className="choice-button__key" aria-hidden="true">
               ←
             </span>
           </button>
-
-          <span className="choice-divider">{copy.divider}</span>
 
           <button
             type="button"
@@ -124,15 +114,15 @@ export function ComparisonPanel({
             onClick={() => onChoose(question.right.id, question.id)}
             aria-keyshortcuts="2 ArrowRight"
           >
-            <span className="choice-button__number">02</span>
+            <span className="choice-button__number" aria-hidden="true">
+              2
+            </span>
             <span className="choice-button__label">{question.right.label}</span>
             <span className="choice-button__key" aria-hidden="true">
               →
             </span>
           </button>
         </div>
-
-        <p className="keyboard-note">{copy.keyboardTip}</p>
       </div>
 
       <div className="comparison-panel__footer">

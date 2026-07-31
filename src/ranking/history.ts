@@ -1,15 +1,19 @@
 import {
   deriveRankingSnapshot,
+  getMaximumDecisionCount,
   parseRankingSession,
-  serializeRankingSession,
 } from './session.ts'
 import {
+  MAX_RANKING_HISTORY_ENTRIES,
+  MAX_RANKING_ITEMS,
+  MAX_RANKING_LABEL_LENGTH,
   RANKING_HISTORY_VERSION,
   type RankingHistory,
   type RankingHistoryEntry,
   type RankingSession,
 } from './types.ts'
 
+const LEGACY_RANKING_HISTORY_VERSION = 1
 const MAX_HISTORY_ENTRY_ID_LENGTH = 128
 const MAX_DATE_TIMESTAMP = 8_640_000_000_000_000
 
@@ -31,23 +35,35 @@ export function createCompletedRankingHistoryEntry(
   if (!isValidSavedAt(savedAt)) {
     throw new TypeError('A ranking history entry needs a valid timestamp.')
   }
-  if (deriveRankingSnapshot(session).finalRanking === null) {
+
+  const snapshot = deriveRankingSnapshot(session)
+  if (snapshot.finalRanking === null) {
     return null
   }
 
-  return { id, savedAt, session }
+  return {
+    id,
+    savedAt,
+    ranking: snapshot.finalRanking.map((item) => item.label),
+    decisionCount: snapshot.progress.decisionCount,
+  }
 }
 
 export function addRankingHistoryEntry(
   history: RankingHistory,
   entry: RankingHistoryEntry,
 ): RankingHistory {
-  const serializedSession = serializeRankingSession(entry.session)
+  const parsedHistory = parseCurrentRankingHistory(history)
+  const parsedEntry = parseCurrentRankingHistoryEntry(entry)
+  if (parsedHistory === null || parsedEntry === null) {
+    throw new TypeError('Cannot add an invalid ranking history entry.')
+  }
+
   if (
-    history.entries.some(
+    parsedHistory.entries.some(
       (existingEntry) =>
-        existingEntry.id === entry.id ||
-        serializeRankingSession(existingEntry.session) === serializedSession,
+        existingEntry.id === parsedEntry.id ||
+        hasSameSnapshot(existingEntry, parsedEntry),
     )
   ) {
     return history
@@ -55,12 +71,15 @@ export function addRankingHistoryEntry(
 
   return {
     version: RANKING_HISTORY_VERSION,
-    entries: [entry, ...history.entries],
+    entries: [parsedEntry, ...parsedHistory.entries].slice(
+      0,
+      MAX_RANKING_HISTORY_ENTRIES,
+    ),
   }
 }
 
 export function serializeRankingHistory(history: RankingHistory): string {
-  const parsedHistory = parseRankingHistory(history)
+  const parsedHistory = parseCurrentRankingHistory(history)
   if (parsedHistory === null) {
     throw new TypeError('Cannot serialize an invalid ranking history.')
   }
@@ -79,7 +98,27 @@ export function deserializeRankingHistory(
   }
 }
 
+/**
+ * Parses the current snapshot format and migrates legacy v1 session archives in
+ * memory. Persistence decides when to write that migrated value under the v2
+ * key, so the legacy data can remain untouched as a recovery source.
+ */
 export function parseRankingHistory(value: unknown): RankingHistory | null {
+  if (!isRecord(value)) {
+    return null
+  }
+
+  if (value.version === RANKING_HISTORY_VERSION) {
+    return parseCurrentRankingHistory(value)
+  }
+  if (value.version === LEGACY_RANKING_HISTORY_VERSION) {
+    return migrateLegacyRankingHistory(value)
+  }
+
+  return null
+}
+
+function parseCurrentRankingHistory(value: unknown): RankingHistory | null {
   if (!isRecord(value)) {
     return null
   }
@@ -87,8 +126,70 @@ export function parseRankingHistory(value: unknown): RankingHistory | null {
   const { version, entries: entryValues } = value
   if (
     version !== RANKING_HISTORY_VERSION ||
-    !Array.isArray(entryValues)
+    !Array.isArray(entryValues) ||
+    entryValues.length > MAX_RANKING_HISTORY_ENTRIES
   ) {
+    return null
+  }
+
+  const entries: RankingHistoryEntry[] = []
+  const entryIds = new Set<string>()
+
+  for (const entryValue of entryValues) {
+    const entry = parseCurrentRankingHistoryEntry(entryValue)
+    if (entry === null || entryIds.has(entry.id)) {
+      return null
+    }
+
+    entries.push(entry)
+    entryIds.add(entry.id)
+  }
+
+  return {
+    version: RANKING_HISTORY_VERSION,
+    entries,
+  }
+}
+
+function parseCurrentRankingHistoryEntry(
+  value: unknown,
+): RankingHistoryEntry | null {
+  if (!isRecord(value)) {
+    return null
+  }
+
+  const { id, savedAt, ranking: rankingValue, decisionCount } = value
+  if (
+    !isValidHistoryEntryId(id) ||
+    !isValidSavedAt(savedAt) ||
+    !Array.isArray(rankingValue)
+  ) {
+    return null
+  }
+
+  const ranking = parseRankingLabels(rankingValue)
+  if (
+    ranking === null ||
+    !Number.isSafeInteger(decisionCount) ||
+    (decisionCount as number) < ranking.length - 1 ||
+    (decisionCount as number) > getMaximumDecisionCount(ranking.length)
+  ) {
+    return null
+  }
+
+  return {
+    id,
+    savedAt,
+    ranking,
+    decisionCount: decisionCount as number,
+  }
+}
+
+function migrateLegacyRankingHistory(
+  value: Record<string, unknown>,
+): RankingHistory | null {
+  const entryValues = value.entries
+  if (!Array.isArray(entryValues)) {
     return null
   }
 
@@ -110,14 +211,30 @@ export function parseRankingHistory(value: unknown): RankingHistory | null {
     }
 
     const session = parseRankingSession(sessionValue)
-    if (
-      session === null ||
-      deriveRankingSnapshot(session).finalRanking === null
-    ) {
+    if (session === null) {
       return null
     }
 
-    entries.push({ id, savedAt, session })
+    const snapshot = deriveRankingSnapshot(session)
+    if (snapshot.finalRanking === null) {
+      return null
+    }
+
+    const ranking = parseRankingLabels(
+      snapshot.finalRanking.map((item) => item.label),
+    )
+    if (ranking === null) {
+      return null
+    }
+
+    if (entries.length < MAX_RANKING_HISTORY_ENTRIES) {
+      entries.push({
+        id,
+        savedAt,
+        ranking,
+        decisionCount: snapshot.progress.decisionCount,
+      })
+    }
     entryIds.add(id)
   }
 
@@ -125,6 +242,47 @@ export function parseRankingHistory(value: unknown): RankingHistory | null {
     version: RANKING_HISTORY_VERSION,
     entries,
   }
+}
+
+function parseRankingLabels(values: readonly unknown[]): readonly string[] | null {
+  if (values.length < 2 || values.length > MAX_RANKING_ITEMS) {
+    return null
+  }
+
+  const labels: string[] = []
+  const normalizedLabels = new Set<string>()
+
+  for (const value of values) {
+    if (
+      typeof value !== 'string' ||
+      value.length === 0 ||
+      value.length > MAX_RANKING_LABEL_LENGTH ||
+      value.trim() !== value
+    ) {
+      return null
+    }
+
+    const normalizedLabel = value.toLocaleLowerCase('de-DE')
+    if (normalizedLabels.has(normalizedLabel)) {
+      return null
+    }
+
+    labels.push(value)
+    normalizedLabels.add(normalizedLabel)
+  }
+
+  return labels
+}
+
+function hasSameSnapshot(
+  left: RankingHistoryEntry,
+  right: RankingHistoryEntry,
+): boolean {
+  return (
+    left.decisionCount === right.decisionCount &&
+    left.ranking.length === right.ranking.length &&
+    left.ranking.every((label, index) => label === right.ranking[index])
+  )
 }
 
 function isValidHistoryEntryId(value: unknown): value is string {
@@ -146,5 +304,5 @@ function isValidSavedAt(value: unknown): value is number {
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
 }

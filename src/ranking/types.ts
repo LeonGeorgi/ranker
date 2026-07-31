@@ -1,7 +1,8 @@
 export const RANKING_SESSION_VERSION = 1
-export const RANKING_HISTORY_VERSION = 1
+export const RANKING_HISTORY_VERSION = 2
 export const MAX_RANKING_ITEMS = 50
 export const MAX_RANKING_LABEL_LENGTH = 120
+export const MAX_RANKING_HISTORY_ENTRIES = 50
 
 export interface RankingItem {
   readonly id: string
@@ -28,7 +29,9 @@ export interface RankingSession {
 export interface RankingHistoryEntry {
   readonly id: string
   readonly savedAt: number
-  readonly session: RankingSession
+  /** Best to worst, stored independently of the ranking algorithm. */
+  readonly ranking: readonly string[]
+  readonly decisionCount: number
 }
 
 export interface RankingHistory {

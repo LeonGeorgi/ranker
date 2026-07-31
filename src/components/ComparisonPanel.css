@@ -13,26 +13,9 @@
   border-top: 1px solid var(--border-strong);
 }
 
-.comparison-progress__facts {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 0.4rem 1rem;
-  color: var(--text-muted);
-  font-family: var(--font-data);
-  font-size: 0.69rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.comparison-progress__facts strong {
-  color: var(--text-strong);
-  font-size: 1rem;
-  font-weight: 700;
-}
-
 .comparison-progress__track {
   height: 0.16rem;
-  margin-top: 0.65rem;
+  margin-top: 0.55rem;
   overflow: hidden;
   background: var(--progress-track);
 }
@@ -45,10 +28,11 @@
 }
 
 .comparison-progress > p {
-  margin: 0.55rem 0 0;
-  color: var(--text-faint);
+  margin: 0;
+  color: var(--text-muted);
   font-family: var(--font-data);
-  font-size: 0.64rem;
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .comparison-panel__question {
@@ -61,7 +45,7 @@
 
 .comparison-panel__question h1 {
   max-width: 9ch;
-  margin: 0.65rem 0 0;
+  margin: 0;
   color: var(--text-strong);
   font-family: var(--font-display);
   font-size: clamp(2.6rem, 4.45vw, 4.7rem);
@@ -69,12 +53,6 @@
   letter-spacing: -0.035em;
   line-height: 0.92;
   text-wrap: balance;
-}
-
-.comparison-panel__question h1:focus-visible {
-  border-radius: 0.1rem;
-  outline: 2px solid var(--accent);
-  outline-offset: 0.2rem;
 }
 
 .comparison-panel__hint {
@@ -159,29 +137,6 @@
 .choice-button__key {
   justify-self: end;
   font-size: 1rem;
-}
-
-.choice-divider {
-  position: absolute;
-  z-index: 2;
-  top: 50%;
-  left: 50%;
-  padding: 0.25rem 0.35rem;
-  color: var(--text-faint);
-  background: var(--surface-page);
-  font-family: var(--font-data);
-  font-size: 0.58rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  transform: translate(-50%, -50%);
-}
-
-.keyboard-note {
-  margin: 0.85rem 0 0;
-  color: var(--text-faint);
-  font-family: var(--font-data);
-  font-size: 0.63rem;
-  text-align: center;
 }
 
 .comparison-panel__footer {
@@ -315,8 +270,7 @@
 }
 
 @media (max-width: 40rem), (hover: none), (pointer: coarse) {
-  .choice-button__key,
-  .keyboard-note {
+  .choice-button__key {
     display: none;
   }
 }

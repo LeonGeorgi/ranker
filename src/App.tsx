@@ -43,6 +43,7 @@ import {
   readStoredRankingSession,
   writeStoredRankingHistory,
   writeStoredRankingSession,
+  type RankingStorage,
   type StoredSessionIssue,
 } from './ranking/storage.ts'
 import {
@@ -61,6 +62,7 @@ interface InitialAppState {
   readonly language: Language
   readonly session: RankingSession | null
   readonly sessionIssue: StoredSessionIssue
+  readonly storage: RankingStorage | null
   readonly theme: ThemePreference
 }
 
@@ -208,48 +210,60 @@ function MobileSettings({
   )
 }
 
+function getBrowserStorage(): RankingStorage | null {
+  try {
+    return window.localStorage
+  } catch {
+    return null
+  }
+}
+
 function loadInitialAppState(): InitialAppState {
   const browserLanguage = getBrowserPreferredLanguage(
     window.navigator.language,
   )
+  const storage = getBrowserStorage()
 
-  try {
-    const storage = window.localStorage
-    const storedHistory = readStoredRankingHistory(storage)
-    const storedSession = readStoredRankingSession(storage)
-    return {
-      history: storedHistory.history,
-      historyIssue: storedHistory.issue,
-      language: readStoredLanguage(storage, browserLanguage),
-      session: storedSession.session,
-      sessionIssue: storedSession.issue,
-      theme: readStoredTheme(storage),
-    }
-  } catch {
+  if (storage === null) {
     return {
       history: createEmptyRankingHistory(),
       historyIssue: 'unavailable',
       language: browserLanguage,
       session: null,
       sessionIssue: 'unavailable',
+      storage: null,
       theme: DEFAULT_THEME,
     }
   }
-}
 
-function persistLanguage(language: Language): void {
-  try {
-    writeStoredLanguage(window.localStorage, language)
-  } catch {
-    // The in-memory language change remains usable when browser storage is blocked.
+  const storedHistory = readStoredRankingHistory(storage)
+  const storedSession = readStoredRankingSession(storage)
+  return {
+    history: storedHistory.history,
+    historyIssue: storedHistory.issue,
+    language: readStoredLanguage(storage, browserLanguage),
+    session: storedSession.session,
+    sessionIssue: storedSession.issue,
+    storage,
+    theme: readStoredTheme(storage),
   }
 }
 
-function persistTheme(theme: ThemePreference): void {
-  try {
-    writeStoredTheme(window.localStorage, theme)
-  } catch {
-    // The in-memory theme change remains usable when browser storage is blocked.
+function persistLanguage(
+  storage: RankingStorage | null,
+  language: Language,
+): void {
+  if (storage !== null) {
+    writeStoredLanguage(storage, language)
+  }
+}
+
+function persistTheme(
+  storage: RankingStorage | null,
+  theme: ThemePreference,
+): void {
+  if (storage !== null) {
+    writeStoredTheme(storage, theme)
   }
 }
 
@@ -332,6 +346,7 @@ function App() {
     useState<StorageWarningCode>(initialState.historyIssue)
   const [sessionStorageWarningCode, setSessionStorageWarningCode] =
     useState<StorageWarningCode>(initialState.sessionIssue)
+  const storage = initialState.storage
   const prefersDarkMode = useSystemPrefersDarkMode()
   const colorScheme: ColorScheme =
     theme === 'system' ? (prefersDarkMode ? 'dark' : 'light') : theme
@@ -360,17 +375,18 @@ function App() {
       ? []
       : [question.left.id, question.right.id]
   }, [snapshot?.currentQuestion])
+  const historyRef = useRef(history)
   const previousSessionRef = useRef(session)
   const previousPhaseRef = useRef(appPhase)
 
   const changeLanguage = (nextLanguage: Language) => {
     setLanguage(nextLanguage)
-    persistLanguage(nextLanguage)
+    persistLanguage(storage, nextLanguage)
   }
 
   const changeTheme = (nextTheme: ThemePreference) => {
     setTheme(nextTheme)
-    persistTheme(nextTheme)
+    persistTheme(storage, nextTheme)
   }
 
   useLayoutEffect(() => {
@@ -392,6 +408,41 @@ function App() {
     )
     setMetaContent('meta[property="og:locale"]', copy.meta.openGraphLocale)
   }, [copy, language])
+
+  useEffect(() => {
+    historyRef.current = history
+  }, [history])
+
+  useEffect(() => {
+    if (session === null || snapshot?.finalRanking === null) {
+      return
+    }
+
+    const historyEntry = createCompletedRankingHistoryEntry(
+      session,
+      window.crypto.randomUUID(),
+      Date.now(),
+    )
+    if (historyEntry === null) {
+      return
+    }
+
+    const updatedHistory = addRankingHistoryEntry(
+      historyRef.current,
+      historyEntry,
+    )
+    if (updatedHistory === historyRef.current) {
+      return
+    }
+
+    historyRef.current = updatedHistory
+    setHistory(updatedHistory)
+    const wasStored =
+      storage !== null && writeStoredRankingHistory(storage, updatedHistory)
+    setHistoryStorageWarningCode(
+      storage === null ? 'unavailable' : wasStored ? null : 'write-failed',
+    )
+  }, [session, snapshot, storage])
 
   useEffect(() => {
     const previousPhase = previousPhaseRef.current
@@ -423,19 +474,22 @@ function App() {
 
     void Promise.resolve().then(() => {
       const wasStored =
-        session === null
-          ? clearStoredRankingSession(window.localStorage)
-          : writeStoredRankingSession(window.localStorage, session)
+        storage !== null &&
+        (session === null
+          ? clearStoredRankingSession(storage)
+          : writeStoredRankingSession(storage, session))
 
       if (!isCancelled) {
-        setSessionStorageWarningCode(wasStored ? null : 'write-failed')
+        setSessionStorageWarningCode(
+          storage === null ? 'unavailable' : wasStored ? null : 'write-failed',
+        )
       }
     })
 
     return () => {
       isCancelled = true
     }
-  }, [session])
+  }, [session, storage])
 
   const startRanking = (labels: readonly string[]) => {
     setSession(createRankingSession(labels, createSessionSeed()))
@@ -482,6 +536,11 @@ function App() {
   }, [])
 
   const editList = () => {
+    if (snapshot !== null && snapshot.finalRanking !== null) {
+      resetRanking()
+      return
+    }
+
     if (session !== null && session.decisions.length > 0) {
       setIsResetDialogOpen(true)
       return
@@ -493,26 +552,6 @@ function App() {
   const resetRanking = () => {
     if (session !== null) {
       setDraft(session.items.map((item) => item.label).join('\n'))
-
-      if (snapshot !== null && snapshot.finalRanking !== null) {
-        const historyEntry = createCompletedRankingHistoryEntry(
-          session,
-          window.crypto.randomUUID(),
-          Date.now(),
-        )
-        if (historyEntry !== null) {
-          const updatedHistory = addRankingHistoryEntry(
-            history,
-            historyEntry,
-          )
-          setHistory(updatedHistory)
-          setHistoryStorageWarningCode(
-            writeStoredRankingHistory(window.localStorage, updatedHistory)
-              ? null
-              : 'write-failed',
-          )
-        }
-      }
     }
     setSession(null)
     setShouldAnimateResult(false)
@@ -541,19 +580,6 @@ function App() {
         </div>
 
         <div className="app-header__tools">
-          <div className="app-header__status">
-            {hasActiveSession ? (
-              <>
-                <span className="status-dot" aria-hidden="true" />
-                {storageWarning === null
-                  ? copy.header.stored
-                  : copy.header.temporary}
-              </>
-            ) : (
-              copy.header.tagline
-            )}
-          </div>
-
           <HistoryButton
             copy={copy.history}
             count={history.entries.length}

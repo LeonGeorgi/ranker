@@ -23,9 +23,6 @@ export interface AppCopy {
   }
   readonly header: {
     readonly settings: string
-    readonly stored: string
-    readonly temporary: string
-    readonly tagline: string
   }
   readonly history: {
     readonly open: string
@@ -72,16 +69,13 @@ export interface AppCopy {
     readonly longSession: string
   }
   readonly comparison: {
-    readonly discoveryPair: string
-    readonly merge: string
-    readonly visibleItems: (totalCount: number) => string
-    readonly decisionsLabel: (count: number) => string
     readonly progressLabel: string
-    readonly determinedProgress: (percent: number) => string
+    readonly progressSummary: (
+      percent: number,
+      decisionCount: number,
+    ) => string
     readonly title: string
     readonly hint: string
-    readonly divider: string
-    readonly keyboardTip: string
     readonly undo: string
     readonly editList: string
     readonly liveQuestion: (
@@ -93,7 +87,6 @@ export interface AppCopy {
   readonly result: {
     readonly changeLastDecision: string
     readonly newRanking: string
-    readonly resultKicker: string
     readonly resultTitle: string
     readonly decisionCount: (count: number) => string
     readonly copied: string
@@ -156,20 +149,17 @@ export const copyByLanguage = {
     },
     header: {
       settings: 'Einstellungen',
-      stored: 'Lokal gespeichert',
-      temporary: 'Nur temporär',
-      tagline: 'Direkt vergleichen. Klar entscheiden.',
     },
     history: {
       open: 'Verlauf',
       openLabel: (count) =>
         count === 0
           ? 'Verlauf öffnen'
-          : `Verlauf öffnen, ${count} ${count === 1 ? 'gespeichertes Ranking' : 'gespeicherte Rankings'}`,
-      kicker: 'Gespeicherte Rankings',
+          : `Verlauf öffnen, ${count} ${count === 1 ? 'gespeicherte Rangliste' : 'gespeicherte Ranglisten'}`,
+      kicker: 'Gespeicherte Ranglisten',
       title: 'Dein Verlauf',
-      empty: 'Noch keine abgeschlossenen Rankings gespeichert.',
-      savedOn: (formattedDate) => `Ranking vom ${formattedDate}`,
+      empty: 'Noch keine abgeschlossenen Ranglisten gespeichert.',
+      savedOn: (formattedDate) => `Rangliste vom ${formattedDate}`,
       entrySummary: (itemCount, decisionCount) =>
         `${itemCount} ${itemCount === 1 ? 'Eintrag' : 'Einträge'} · ${decisionCount} ${germanDecisionLabel(decisionCount)}`,
       close: 'Schließen',
@@ -184,9 +174,9 @@ export const copyByLanguage = {
       kicker: 'Neue Rangliste',
       title: 'Was gewinnt?',
       description:
-        'Füge deine Auswahl ein und entscheide jeweils nach deinem eigenen Kriterium. Ranker baut daraus Schritt für Schritt eine eindeutige Reihenfolge.',
-      examplesLabel: 'Womit möchtest du anfangen?',
-      replaceExamples: 'Ersetzen',
+        'Ein Eintrag pro Zeile. Du entscheidest jeweils zwischen zwei – daraus entsteht deine Rangliste.',
+      examplesLabel: 'Beispiele',
+      replaceExamples: 'Andere',
       insertExample: (title) => `Beispiel „${title}“ einfügen`,
       listLabel: 'Deine Liste',
       itemCount: (count) =>
@@ -210,18 +200,12 @@ export const copyByLanguage = {
         'Bei mehr als 30 Einträgen kann das Ranking einige Minuten dauern.',
     },
     comparison: {
-      discoveryPair: 'Ein neues Paar kommt dazu',
-      merge: 'Zwei Gruppen werden zusammengeführt',
-      visibleItems: (totalCount) => `von ${totalCount} im Graph`,
-      decisionsLabel: germanDecisionLabel,
-      progressLabel: 'Ableitbare Rangfolge',
-      determinedProgress: (percent) =>
-        `${percent} % der Paarbeziehungen sind bereits ableitbar.`,
+      progressLabel: 'Fortschritt der Rangliste',
+      progressSummary: (percent, decisionCount) =>
+        `${percent} % bestimmt · ${decisionCount} ${germanDecisionLabel(decisionCount)}`,
       title: 'Was gewinnt?',
       hint:
-        'Entscheide nach deinem Kriterium. Ein Unentschieden gibt es in dieser Version nicht.',
-      divider: 'oder',
-      keyboardTip: 'Tipp: Nutze 1 und 2 oder die Pfeiltasten.',
+        'Bleib bei demselben Kriterium und wähle immer genau eine Option.',
       undo: 'Rückgängig',
       editList: 'Liste ändern',
       liveQuestion: (decisionNumber, leftLabel, rightLabel) =>
@@ -229,8 +213,7 @@ export const copyByLanguage = {
     },
     result: {
       changeLastDecision: 'Letzte Entscheidung ändern',
-      newRanking: 'Neues Ranking',
-      resultKicker: 'Dein Ergebnis',
+      newRanking: 'Neue Rangliste',
       resultTitle: 'Deine Rangliste',
       decisionCount: (count) => `${count} ${germanDecisionLabel(count)}`,
       copied: 'Kopiert',
@@ -286,9 +269,6 @@ export const copyByLanguage = {
     },
     header: {
       settings: 'Settings',
-      stored: 'Saved locally',
-      temporary: 'Temporary only',
-      tagline: 'Compare directly. Decide clearly.',
     },
     history: {
       open: 'History',
@@ -314,9 +294,9 @@ export const copyByLanguage = {
       kicker: 'New ranking',
       title: 'What wins?',
       description:
-        'Add your choices and decide each comparison using your own criterion. Ranker turns those decisions into one definitive order, step by step.',
-      examplesLabel: 'What would you like to rank?',
-      replaceExamples: 'Replace',
+        'Add one item per line. You choose between two at a time – Ranker turns that into your ranking.',
+      examplesLabel: 'Examples',
+      replaceExamples: 'More',
       insertExample: (title) => `Insert the “${title}” example`,
       listLabel: 'Your list',
       itemCount: (count) => `${count} ${count === 1 ? 'item' : 'items'}`,
@@ -339,18 +319,12 @@ export const copyByLanguage = {
         'With more than 30 items, the ranking may take several minutes.',
     },
     comparison: {
-      discoveryPair: 'A new pair joins the graph',
-      merge: 'Two groups are being merged',
-      visibleItems: (totalCount) => `of ${totalCount} in the graph`,
-      decisionsLabel: englishDecisionLabel,
-      progressLabel: 'Determined pairwise order',
-      determinedProgress: (percent) =>
-        `${percent}% of pairwise relationships are already determined.`,
+      progressLabel: 'Ranking progress',
+      progressSummary: (percent, decisionCount) =>
+        `${percent}% determined · ${decisionCount} ${englishDecisionLabel(decisionCount)}`,
       title: 'What wins?',
       hint:
-        'Use your criterion to decide. Ties are not available in this version.',
-      divider: 'or',
-      keyboardTip: 'Tip: Use 1 and 2 or the arrow keys.',
+        'Keep using the same criterion and always choose exactly one option.',
       undo: 'Undo',
       editList: 'Edit list',
       liveQuestion: (decisionNumber, leftLabel, rightLabel) =>
@@ -359,7 +333,6 @@ export const copyByLanguage = {
     result: {
       changeLastDecision: 'Change last decision',
       newRanking: 'New ranking',
-      resultKicker: 'Your result',
       resultTitle: 'Your ranking',
       decisionCount: (count) => `${count} ${englishDecisionLabel(count)}`,
       copied: 'Copied',

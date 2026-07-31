@@ -8,7 +8,7 @@
 
 .result-panel h1 {
   max-width: 10ch;
-  margin: 0.65rem 0 0;
+  margin: 0;
   color: var(--text-strong);
   font-family: var(--font-display);
   font-size: clamp(2.75rem, 4.6vw, 4.9rem);
@@ -16,12 +16,6 @@
   letter-spacing: -0.04em;
   line-height: 0.92;
   text-wrap: balance;
-}
-
-.result-panel h1:focus-visible {
-  border-radius: 0.1rem;
-  outline: 2px solid var(--accent);
-  outline-offset: 0.2rem;
 }
 
 .result-panel .text-action {
@@ -50,12 +44,23 @@
   font-size: clamp(2.5rem, 4vw, 3.9rem);
 }
 
-.result-panel__header > p {
-  margin: 0 0 0.25rem;
+.result-panel__header-actions {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.result-panel__header-actions > p {
+  margin: 0;
   color: var(--text-faint);
   font-family: var(--font-data);
   font-size: 0.65rem;
   white-space: nowrap;
+}
+
+.result-panel__header-actions .secondary-action {
+  min-height: 2.75rem;
 }
 
 .ranking-list {
@@ -106,7 +111,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin: 1.5rem 0 1rem;
+  margin: 1rem 0 0;
 }
 
 .copy-error {
@@ -166,15 +171,21 @@
     align-items: flex-start;
   }
 
+  .result-panel__header-actions {
+    width: 100%;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
   .result-panel__buttons {
-    align-items: stretch;
-    flex-direction: column;
-    gap: 0.25rem;
-    margin: 1.25rem 0 0.75rem;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 1rem;
   }
 
   .result-panel__buttons .text-action {
-    justify-content: center;
+    min-width: 0;
   }
 
   .ranking-list {

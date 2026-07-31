@@ -65,7 +65,7 @@ describe('interface copy', () => {
   it('localizes history labels and counts', () => {
     expect(copyByLanguage.de.history.openLabel(0)).toBe('Verlauf öffnen')
     expect(copyByLanguage.de.history.openLabel(1)).toBe(
-      'Verlauf öffnen, 1 gespeichertes Ranking',
+      'Verlauf öffnen, 1 gespeicherte Rangliste',
     )
     expect(copyByLanguage.en.history.openLabel(2)).toBe(
       'Open history, 2 saved rankings',
@@ -83,5 +83,14 @@ describe('interface copy', () => {
     expect(copyByLanguage.de.comparison.title).toBe('Was gewinnt?')
     expect(copyByLanguage.en.setup.title).toBe('What wins?')
     expect(copyByLanguage.en.comparison.title).toBe('What wins?')
+  })
+
+  it('summarizes ranking progress without exposing scheduler details', () => {
+    expect(copyByLanguage.de.comparison.progressSummary(40, 3)).toBe(
+      '40 % bestimmt · 3 Entscheidungen',
+    )
+    expect(copyByLanguage.en.comparison.progressSummary(10, 1)).toBe(
+      '10% determined · 1 decision',
+    )
   })
 })

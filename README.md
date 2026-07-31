@@ -2,8 +2,8 @@
 
 Ranker turns simple head-to-head choices into one exact personal ranking. As you
 compare items, the app builds a directed decision graph, saves your progress
-locally, and lets you undo your latest choice. Completed rankings remain
-available in a local history when you start a new one.
+locally, and lets you undo your latest choice. Completed rankings are added to
+a local history as soon as they are finished.
 
 The interface is available in English and German. It starts in English unless
 the browser prefers German, remembers the selected language independently of a
@@ -24,9 +24,10 @@ browser without an account, backend, or network requests.
 - See how much of the final order can already be derived transitively, and undo
   the most recent decision at any time.
 - See the final best-to-worst order immediately, with a brief reveal animation,
-  once it is uniquely determined, then copy the numbered list to the clipboard.
-- Keep the active session and completed rankings in separate, versioned
-  `localStorage` entries. Resetting an active ranking does not clear the history.
+  once it is uniquely determined, then copy one reusable label per line.
+- Keep the active session and up to 50 completed ranking snapshots in separate,
+  versioned `localStorage` entries. Resetting an active ranking does not clear
+  the history.
 - Continue in memory if browser storage is unavailable; the interface reports
   that the current data is temporary.
 
@@ -46,6 +47,9 @@ decision graph admits exactly one topological order.
 The session stores only the schema version, deterministic seed, ordered items,
 and decision log. Questions, graph data, progress, and the result are derived by
 replaying that canonical state, so reloading and undoing remain deterministic.
+Completed history entries store only their final label order, completion time,
+and decision count, so viewing old results does not depend on replaying the
+ranking algorithm.
 
 ## Requirements
 
