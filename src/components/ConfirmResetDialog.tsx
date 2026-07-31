@@ -42,7 +42,6 @@ export function ConfirmResetDialog({
       onClose={onCancel}
       aria-labelledby="reset-dialog-title"
     >
-      <p className="section-kicker">{copy.kicker}</p>
       <h2 id="reset-dialog-title">{copy.title}</h2>
       <p>{copy.description}</p>
       <div className="reset-dialog__actions">

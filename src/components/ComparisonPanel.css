@@ -9,8 +9,6 @@
 .comparison-progress {
   width: 100%;
   max-width: 35rem;
-  padding-top: 0.9rem;
-  border-top: 1px solid var(--border-strong);
 }
 
 .comparison-progress__track {
@@ -30,7 +28,6 @@
 .comparison-progress > p {
   margin: 0;
   color: var(--text-muted);
-  font-family: var(--font-data);
   font-size: 0.72rem;
   font-variant-numeric: tabular-nums;
 }
@@ -47,11 +44,10 @@
   max-width: 9ch;
   margin: 0;
   color: var(--text-strong);
-  font-family: var(--font-display);
-  font-size: clamp(2.6rem, 4.45vw, 4.7rem);
-  font-weight: 600;
-  letter-spacing: -0.035em;
-  line-height: 0.92;
+  font-size: clamp(2.4rem, 4vw, 3.65rem);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1;
   text-wrap: balance;
 }
 
@@ -69,7 +65,10 @@
   align-items: stretch;
   gap: 0;
   margin-top: 2.4rem;
-  border-block: 1px solid var(--border-strong);
+  overflow: hidden;
+  border: 1px solid var(--border-control);
+  border-radius: 0.4rem;
+  background: var(--surface-raised);
 }
 
 .choice-stack::before {
@@ -79,7 +78,7 @@
   bottom: 0;
   left: 50%;
   width: 1px;
-  background: var(--border-strong);
+  background: var(--border-subtle);
   content: '';
   pointer-events: none;
 }
@@ -88,7 +87,7 @@
   position: relative;
   display: grid;
   min-width: 0;
-  min-height: 10.5rem;
+  min-height: 9.75rem;
   align-content: space-between;
   gap: 1rem;
   padding: 1.2rem 1.05rem;
@@ -100,43 +99,39 @@
   font: inherit;
   text-align: left;
   cursor: pointer;
-  transition:
-    background-color 160ms ease,
-    box-shadow 160ms ease;
+  transition: background-color 140ms ease;
 }
 
 .choice-button:focus-visible {
   z-index: 3;
   outline: 2px solid var(--accent);
   outline-offset: -2px;
-  box-shadow: inset 0 -3px 0 var(--accent);
 }
 
 .choice-button:active {
   background: var(--choice-hover);
-  box-shadow: inset 0 -3px 0 var(--accent);
 }
 
-.choice-button__number,
-.choice-button__key {
+.choice-button__number {
+  display: grid;
+  width: 1.5rem;
+  height: 1.5rem;
+  place-items: center;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.25rem;
   color: var(--text-faint);
-  font-family: var(--font-data);
-  font-size: 0.67rem;
-  font-weight: 700;
+  background: var(--surface-page);
+  font-size: 0.72rem;
+  font-weight: 560;
+  font-variant-numeric: tabular-nums;
 }
 
 .choice-button__label {
   overflow-wrap: anywhere;
-  font-family: var(--font-display);
-  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-}
-
-.choice-button__key {
-  justify-self: end;
-  font-size: 1rem;
+  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  font-weight: 590;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
 }
 
 .comparison-panel__footer {
@@ -150,8 +145,8 @@
 
 .comparison-panel__footer .text-action {
   min-height: 2.75rem;
-  padding-inline: 0.5rem;
-  border-radius: 0.1rem;
+  padding-inline: 0.75rem;
+  border-radius: 0.35rem;
 }
 
 .comparison-panel__footer .text-action:active:not(:disabled) {
@@ -169,19 +164,12 @@
 @keyframes question-enter {
   from {
     opacity: 0;
-    transform: translateY(0.4rem);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
 
 @media (hover: hover) and (pointer: fine) {
   .choice-button:hover {
     background: var(--choice-hover);
-    box-shadow: inset 0 -3px 0 var(--accent);
   }
 }
 
@@ -232,7 +220,7 @@
   }
 
   .comparison-panel__question h1 {
-    font-size: clamp(2.35rem, 11vw, 3.25rem);
+    font-size: clamp(2.3rem, 10vw, 3rem);
   }
 
   .comparison-panel__hint {
@@ -258,7 +246,7 @@
 
   .choice-button {
     min-height: 6.75rem;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto 1fr;
     align-content: center;
     align-items: center;
     padding-block: 1rem;
@@ -266,12 +254,6 @@
 
   .comparison-panel__footer {
     gap: 0.5rem;
-  }
-}
-
-@media (max-width: 40rem), (hover: none), (pointer: coarse) {
-  .choice-button__key {
-    display: none;
   }
 }
 

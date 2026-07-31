@@ -3,11 +3,11 @@
   max-height: min(82svh, 48rem);
   padding: 0;
   overflow: hidden;
-  border: 1px solid var(--border-control);
-  border-radius: 0.2rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.5rem;
   color: var(--text-strong);
   background: var(--surface-raised);
-  box-shadow: 0 24px 70px rgb(22 20 17 / 24%);
+  box-shadow: 0 20px 60px rgb(20 22 20 / 18%);
 }
 
 .history-dialog[open] {
@@ -17,12 +17,11 @@
 
 .history-dialog::backdrop {
   background: rgb(23 22 20 / 48%);
-  backdrop-filter: blur(3px);
 }
 
 .history-dialog__header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
   padding: 1.5rem;
@@ -30,12 +29,11 @@
 }
 
 .history-dialog__header h2 {
-  margin: 0.55rem 0 0;
-  font-family: var(--font-display);
-  font-size: clamp(1.7rem, 4vw, 2.35rem);
-  font-weight: 600;
-  letter-spacing: -0.035em;
-  line-height: 1.05;
+  margin: 0;
+  font-size: clamp(1.45rem, 3vw, 1.8rem);
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
 }
 
 .history-dialog__close {
@@ -46,10 +44,10 @@
   place-items: center;
   padding: 0;
   border: 1px solid var(--border-control);
-  border-radius: 0.2rem;
+  border-radius: 0.25rem;
   outline: none;
   color: var(--text-strong);
-  background: transparent;
+  background: var(--surface-raised);
   font: inherit;
   font-size: 1.45rem;
   line-height: 1;
@@ -102,19 +100,18 @@
   padding: 1.1rem 1.5rem;
   outline: none;
   cursor: pointer;
-  list-style-position: inside;
+  list-style: none;
 }
 
-.history-entry summary::marker {
-  color: var(--accent);
+.history-entry summary::-webkit-details-marker {
+  display: none;
 }
 
 .history-entry summary::after {
   align-self: center;
   grid-row: 1;
   grid-column: 3;
-  color: var(--accent);
-  font-family: var(--font-data);
+  color: var(--text-faint);
   font-size: 0.9rem;
   content: '+';
 }
@@ -139,8 +136,8 @@
   align-self: center;
   grid-column: 2;
   color: var(--text-faint);
-  font-family: var(--font-data);
-  font-size: 0.64rem;
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
@@ -157,13 +154,12 @@
   overflow-wrap: anywhere;
   color: var(--text-strong);
   font-size: 0.86rem;
-  font-weight: 620;
+  font-weight: 540;
 }
 
 .history-entry__ranking li::marker {
   color: var(--text-faint);
-  font-family: var(--font-data);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-variant-numeric: tabular-nums;
 }
 

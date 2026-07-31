@@ -27,7 +27,6 @@ export interface AppCopy {
   readonly history: {
     readonly open: string
     readonly openLabel: (count: number) => string
-    readonly kicker: string
     readonly title: string
     readonly empty: string
     readonly savedOn: (formattedDate: string) => string
@@ -43,7 +42,6 @@ export interface AppCopy {
     readonly writeFailed: string
   }
   readonly setup: {
-    readonly kicker: string
     readonly title: string
     readonly description: string
     readonly examplesLabel: string
@@ -96,7 +94,6 @@ export interface AppCopy {
   readonly graph: {
     readonly description: (nodeCount: number, edgeCount: number) => string
     readonly emptyDescription: string
-    readonly kicker: string
     readonly title: string
     readonly controlsLabel: string
     readonly zoomOut: string
@@ -109,7 +106,6 @@ export interface AppCopy {
     readonly legend: string
   }
   readonly reset: {
-    readonly kicker: string
     readonly title: string
     readonly description: string
     readonly cancel: string
@@ -156,7 +152,6 @@ export const copyByLanguage = {
         count === 0
           ? 'Verlauf öffnen'
           : `Verlauf öffnen, ${count} ${count === 1 ? 'gespeicherte Rangliste' : 'gespeicherte Ranglisten'}`,
-      kicker: 'Gespeicherte Ranglisten',
       title: 'Dein Verlauf',
       empty: 'Noch keine abgeschlossenen Ranglisten gespeichert.',
       savedOn: (formattedDate) => `Rangliste vom ${formattedDate}`,
@@ -171,7 +166,6 @@ export const copyByLanguage = {
       writeFailed: 'Deine Daten konnten nicht lokal gespeichert werden.',
     },
     setup: {
-      kicker: 'Neue Rangliste',
       title: 'Was gewinnt?',
       description:
         'Ein Eintrag pro Zeile. Du entscheidest jeweils zwischen zwei – daraus entsteht deine Rangliste.',
@@ -224,7 +218,6 @@ export const copyByLanguage = {
       description: (nodeCount, edgeCount) =>
         `${nodeCount} ${nodeCount === 1 ? 'sichtbarer Eintrag' : 'sichtbare Einträge'} und ${edgeCount} ${germanDecisionLabel(edgeCount)}. Pfeile zeigen zum höher eingeordneten Eintrag.`,
       emptyDescription: 'Der Entscheidungsgraph ist noch leer.',
-      kicker: 'Entscheidungsweg',
       title: 'Dein Entscheidungsgraph',
       controlsLabel: 'Graphansicht steuern',
       zoomOut: 'Graph verkleinern',
@@ -238,7 +231,6 @@ export const copyByLanguage = {
       legend: 'Der Pfeil zeigt immer zum höher eingeordneten Eintrag.',
     },
     reset: {
-      kicker: 'Ranking verlassen',
       title: 'Bisherige Entscheidungen löschen?',
       description:
         'Deine Liste bleibt im Eingabefeld erhalten. Die bereits getroffenen Vergleiche lassen sich danach nicht wiederherstellen.',
@@ -276,7 +268,6 @@ export const copyByLanguage = {
         count === 0
           ? 'Open history'
           : `Open history, ${count} saved ${count === 1 ? 'ranking' : 'rankings'}`,
-      kicker: 'Saved rankings',
       title: 'Your history',
       empty: 'No completed rankings have been saved yet.',
       savedOn: (formattedDate) => `Ranking from ${formattedDate}`,
@@ -291,7 +282,6 @@ export const copyByLanguage = {
       writeFailed: 'Your data could not be saved locally.',
     },
     setup: {
-      kicker: 'New ranking',
       title: 'What wins?',
       description:
         'Add one item per line. You choose between two at a time – Ranker turns that into your ranking.',
@@ -343,7 +333,6 @@ export const copyByLanguage = {
       description: (nodeCount, edgeCount) =>
         `${nodeCount} visible ${nodeCount === 1 ? 'item' : 'items'} and ${edgeCount} ${englishDecisionLabel(edgeCount)}. Arrows point to the higher-ranked item.`,
       emptyDescription: 'The decision graph is still empty.',
-      kicker: 'Decision path',
       title: 'Your decision graph',
       controlsLabel: 'Control graph view',
       zoomOut: 'Zoom out',
@@ -357,7 +346,6 @@ export const copyByLanguage = {
       legend: 'The arrow always points to the higher-ranked item.',
     },
     reset: {
-      kicker: 'Leave ranking',
       title: 'Delete previous decisions?',
       description:
         'Your list will remain in the input field. The comparisons you have already made cannot be recovered afterward.',

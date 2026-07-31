@@ -18,6 +18,7 @@ interface GraphPalette {
   readonly edgeLatest: string
   readonly label: string
   readonly labelFontFamily: string
+  readonly nodeActiveFill: string
   readonly nodeFill: string
   readonly nodeStroke: string
 }
@@ -38,17 +39,18 @@ function readGraphPalette(container: HTMLElement): GraphPalette {
   const styles = getComputedStyle(container)
 
   return {
-    accent: getCssValue(styles, '--graph-accent', '#2450e6'),
-    edge: getCssValue(styles, '--graph-edge', '#777c74'),
-    edgeLatest: getCssValue(styles, '--graph-edge-latest', '#2450e6'),
-    label: getCssValue(styles, '--graph-label', '#1d211d'),
+    accent: getCssValue(styles, '--graph-accent', '#2f56c6'),
+    edge: getCssValue(styles, '--text-faint', '#686d68'),
+    edgeLatest: getCssValue(styles, '--graph-edge-latest', '#2f56c6'),
+    label: getCssValue(styles, '--text-strong', '#191b19'),
     labelFontFamily: getCssValue(
       styles,
       '--font-ui',
-      '"Avenir Next", Avenir, ui-sans-serif, system-ui, sans-serif',
+      'ui-sans-serif, system-ui, sans-serif',
     ),
-    nodeFill: getCssValue(styles, '--graph-node-fill', '#f8f5ec'),
-    nodeStroke: getCssValue(styles, '--graph-node-stroke', '#7f847c'),
+    nodeActiveFill: getCssValue(styles, '--focus-soft', 'rgb(47 86 198 / 24%)'),
+    nodeFill: getCssValue(styles, '--surface-raised', '#fff'),
+    nodeStroke: getCssValue(styles, '--border-control', '#8b918b'),
   }
 }
 
@@ -62,7 +64,7 @@ async function createGraph(
   return new Graph({
     container,
     data: { nodes: [], edges: [] },
-    padding: 40,
+    padding: 36,
     zoomRange: [0.45, 1.55],
     animation: prefersReducedMotion
       ? false
@@ -71,18 +73,19 @@ async function createGraph(
       type: 'dagre',
       rankdir: 'BT',
       ranker: 'network-simplex',
-      nodesep: 36,
-      ranksep: 64,
-      nodeSize: [176, 46],
+      nodesep: 28,
+      ranksep: 58,
+      nodeSize: [172, 40],
       animation: !prefersReducedMotion,
     },
     node: {
       type: 'rect',
       style: {
-        size: [176, 46],
+        size: [172, 40],
         radius: 4,
         fill: palette.nodeFill,
         stroke: palette.nodeStroke,
+        strokeOpacity: 0.78,
         lineWidth: 1,
         labelText: (node) => {
           const label = node.data?.label
@@ -91,15 +94,19 @@ async function createGraph(
         labelPlacement: 'center',
         labelFill: palette.label,
         labelFontFamily: palette.labelFontFamily,
-        labelFontSize: 14,
-        labelFontWeight: 550,
+        labelFontSize: 13,
+        labelFontWeight: 500,
         labelMaxWidth: 148,
         labelTextOverflow: 'ellipsis',
       },
       state: {
         current: {
+          fill: palette.nodeActiveFill,
           stroke: palette.accent,
-          lineWidth: 2,
+          strokeOpacity: 1,
+          lineWidth: 1.75,
+          labelFill: palette.accent,
+          labelFontWeight: 600,
         },
       },
       animation: prefersReducedMotion
@@ -111,7 +118,7 @@ async function createGraph(
       style: {
         radius: 4,
         stroke: palette.edge,
-        strokeOpacity: 0.4,
+        strokeOpacity: 0.62,
         lineWidth: 1,
         endArrow: true,
         endArrowType: 'triangle',
@@ -121,7 +128,7 @@ async function createGraph(
       state: {
         latest: {
           stroke: palette.edgeLatest,
-          strokeOpacity: 0.9,
+          strokeOpacity: 0.95,
           lineWidth: 1.75,
         },
       },
@@ -357,10 +364,7 @@ export function RankingGraph({
       aria-labelledby="graph-title"
     >
       <div className="graph-panel__header">
-        <div>
-          <p className="section-kicker">{copy.kicker}</p>
-          <h2 id="graph-title">{copy.title}</h2>
-        </div>
+        <h2 id="graph-title">{copy.title}</h2>
 
         {hasNodes && (
           <div

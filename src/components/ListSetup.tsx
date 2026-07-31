@@ -80,7 +80,6 @@ export function ListSetup({
   return (
     <section className="setup-panel" aria-labelledby="setup-title">
       <div className="setup-panel__intro">
-        <p className="section-kicker">{copy.kicker}</p>
         <h1 id="setup-title" tabIndex={-1}>
           {copy.title}
         </h1>
@@ -91,7 +90,12 @@ export function ListSetup({
         <div className="setup-form__custom-list">
           <div className="setup-form__label-row">
             <label htmlFor="ranking-items">{copy.listLabel}</label>
-            <span>{countLabel}</span>
+            <span className="setup-form__meta">
+              <span>{countLabel}</span>
+              {analysis.error === null && (
+                <span>{copy.expectedComparisons(expectedDecisionCount)}</span>
+              )}
+            </span>
           </div>
           <p id="ranking-items-help" className="field-help">
             {copy.help}
@@ -127,17 +131,7 @@ export function ListSetup({
             className="primary-action setup-form__submit"
             disabled={analysis.error !== null}
           >
-            <span className="setup-form__submit-copy">
-              <span>{copy.start}</span>
-              {analysis.error === null && (
-                <span className="setup-form__submit-estimate">
-                  {copy.expectedComparisons(expectedDecisionCount)}
-                </span>
-              )}
-            </span>
-            <span className="setup-form__submit-arrow" aria-hidden="true">
-              →
-            </span>
+            {copy.start}
           </button>
         </div>
 
@@ -183,9 +177,7 @@ export function ListSetup({
         </div>
 
         <div className="setup-form__status">
-          <p className="local-note">
-            <span aria-hidden="true">●</span> {copy.localNote}
-          </p>
+          <p className="local-note">{copy.localNote}</p>
           {storageWarning !== null && (
             <p className="setup-storage-warning" role="status">
               {storageWarning}

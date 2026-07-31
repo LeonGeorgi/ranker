@@ -103,9 +103,6 @@ export function ComparisonPanel({
               1
             </span>
             <span className="choice-button__label">{question.left.label}</span>
-            <span className="choice-button__key" aria-hidden="true">
-              ←
-            </span>
           </button>
 
           <button
@@ -118,9 +115,6 @@ export function ComparisonPanel({
               2
             </span>
             <span className="choice-button__label">{question.right.label}</span>
-            <span className="choice-button__key" aria-hidden="true">
-              →
-            </span>
           </button>
         </div>
       </div>

@@ -10,11 +10,10 @@
   max-width: 10ch;
   margin: 0;
   color: var(--text-strong);
-  font-family: var(--font-display);
-  font-size: clamp(2.75rem, 4.6vw, 4.9rem);
-  font-weight: 600;
-  letter-spacing: -0.04em;
-  line-height: 0.92;
+  font-size: clamp(2.4rem, 4vw, 3.65rem);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1;
   text-wrap: balance;
 }
 
@@ -33,7 +32,7 @@
 
 .result-panel__header {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
   padding-bottom: 1.5rem;
@@ -41,7 +40,7 @@
 }
 
 .result-panel__header h1 {
-  font-size: clamp(2.5rem, 4vw, 3.9rem);
+  font-size: clamp(2.35rem, 3.5vw, 3.4rem);
 }
 
 .result-panel__header-actions {
@@ -54,8 +53,8 @@
 .result-panel__header-actions > p {
   margin: 0;
   color: var(--text-faint);
-  font-family: var(--font-data);
-  font-size: 0.65rem;
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
@@ -69,42 +68,37 @@
   width: 100%;
   max-height: min(58vh, 35rem);
   margin: 0;
-  padding: 0;
+  padding: 0 0 0 2rem;
   overflow: auto;
-  list-style: none;
 }
 
 .ranking-list li {
-  display: grid;
-  grid-template-columns: 2.75rem minmax(0, 1fr);
-  align-items: center;
-  gap: 0.75rem;
+  display: list-item;
   min-height: 3.75rem;
-  padding: 0.75rem 0.25rem;
+  padding: 1rem 0.25rem 1rem 0.35rem;
   border-bottom: 1px solid var(--border-subtle);
 }
 
-.ranking-list li:first-child .ranking-list__position {
-  color: var(--accent);
+.ranking-list li::marker {
+  color: var(--text-faint);
+  font-size: 0.76rem;
+  font-variant-numeric: tabular-nums;
 }
 
-.ranking-list__position {
-  display: block;
-  width: auto;
-  height: auto;
-  color: var(--text-muted);
-  background: transparent;
-  font-family: var(--font-data);
-  font-size: 0.78rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
+.ranking-list li:first-child::marker {
+  color: var(--text-strong);
+  font-weight: 650;
 }
 
 .ranking-list__label {
   overflow-wrap: anywhere;
   color: var(--text-strong);
   font-size: 0.95rem;
-  font-weight: 620;
+  font-weight: 560;
+}
+
+.ranking-list li:first-child .ranking-list__label {
+  font-weight: 650;
 }
 
 .result-panel__buttons {
@@ -135,7 +129,6 @@
 @keyframes result-reveal {
   from {
     opacity: 0;
-    transform: translateY(0.5rem);
   }
 }
 
@@ -163,7 +156,7 @@
   }
 
   .result-panel h1 {
-    font-size: clamp(2.45rem, 13vw, 3.7rem);
+    font-size: clamp(2.3rem, 10vw, 3rem);
   }
 
   .result-panel__header {

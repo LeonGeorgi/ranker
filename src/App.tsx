@@ -393,7 +393,7 @@ function App() {
     document.documentElement.dataset.theme = colorScheme
     setMetaContent(
       'meta[name="theme-color"]',
-      colorScheme === 'dark' ? '#151815' : '#f3efe4',
+      colorScheme === 'dark' ? '#121412' : '#f7f7f5',
     )
   }, [colorScheme])
 
@@ -565,17 +565,7 @@ function App() {
   return (
     <div className="app-shell" lang={language}>
       <header className="app-header">
-        <div className="brand" aria-label="Ranker">
-          <span className="brand__mark" aria-hidden="true">
-            <svg viewBox="0 0 36 36" focusable="false">
-              <path d="M7 29v-5.5c0-5 4-9 9-9h2" />
-              <path d="M29 29v-5.5c0-5-4-9-9-9h-2" />
-              <path d="M18 15V7" />
-              <path d="m14 11 4-4 4 4" />
-              <circle cx="7" cy="29" r="2" />
-              <circle cx="29" cy="29" r="2" />
-            </svg>
-          </span>
+        <div className="brand">
           <span className="brand__word">Ranker</span>
         </div>
 

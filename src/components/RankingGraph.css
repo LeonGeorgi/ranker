@@ -12,41 +12,60 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
-  padding: 1.35rem 1.5rem 1.1rem;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem 1rem;
 }
 
 .graph-panel__header h2 {
-  margin: 0.2rem 0 0;
+  margin: 0;
   color: var(--text-strong);
-  font-size: 1rem;
-  font-weight: 680;
-  letter-spacing: -0.02em;
+  font-size: 0.92rem;
+  font-weight: 620;
+  letter-spacing: -0.015em;
 }
 
 .graph-controls {
   display: flex;
   align-items: center;
-  gap: 0.15rem;
+  gap: 0;
+  border: 1px solid var(--border-control);
+  border-radius: 0.4rem;
+  background: var(--surface-raised);
+  isolation: isolate;
 }
 
 .graph-control {
+  position: relative;
   display: inline-grid;
-  min-width: 2.25rem;
-  min-height: 2.25rem;
+  min-width: 2.2rem;
+  min-height: 2.2rem;
   place-items: center;
-  padding: 0 0.65rem;
-  border: 1px solid transparent;
-  border-radius: 0.25rem;
+  padding: 0 0.55rem;
+  border: 0;
+  border-radius: 0;
   color: var(--text-muted);
-  background: transparent;
+  background: var(--surface-raised);
   font: inherit;
-  font-size: 1rem;
+  font-size: 0.92rem;
   cursor: pointer;
 }
 
+.graph-control + .graph-control {
+  border-inline-start: 1px solid var(--border-subtle);
+}
+
+.graph-control:first-child {
+  border-start-start-radius: calc(0.4rem - 1px);
+  border-end-start-radius: calc(0.4rem - 1px);
+}
+
+.graph-control:last-child {
+  border-start-end-radius: calc(0.4rem - 1px);
+  border-end-end-radius: calc(0.4rem - 1px);
+}
+
 .graph-control--fit {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 650;
 }
 
@@ -56,7 +75,7 @@
 
 .graph-control:active {
   color: var(--text-strong);
-  background: var(--surface-hover);
+  background: var(--surface-raised-soft);
 }
 
 .graph-stage {
@@ -89,8 +108,8 @@
   max-width: 18rem;
   margin: auto;
   padding: 2rem;
-  color: var(--text-muted);
-  font-size: 0.82rem;
+  color: var(--text-faint);
+  font-size: 0.8rem;
   line-height: 1.55;
   text-align: center;
   pointer-events: none;
@@ -114,17 +133,17 @@
 .graph-legend {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.4rem;
   margin: 0;
-  padding: 0.85rem 1.5rem 1rem;
-  color: var(--text-muted);
-  font-size: 0.72rem;
+  padding: 0.8rem 1.5rem 0.9rem;
+  color: var(--text-faint);
+  font-size: 0.7rem;
 }
 
 .graph-legend span {
-  color: var(--text-faint);
-  font-size: 0.9rem;
-  font-weight: 700;
+  color: currentcolor;
+  font-size: 0.82rem;
+  font-weight: 600;
 }
 
 @media (max-width: 62rem) {

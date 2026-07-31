@@ -95,10 +95,7 @@ export function RankingHistoryDialog({
       onClose={onClose}
     >
       <div className="history-dialog__header">
-        <div>
-          <p className="section-kicker">{copy.kicker}</p>
-          <h2 id="ranking-history-title">{copy.title}</h2>
-        </div>
+        <h2 id="ranking-history-title">{copy.title}</h2>
         <button
           type="button"
           className="history-dialog__close"

@@ -53,11 +53,9 @@ export function RankingResult({
       aria-labelledby="result-title"
     >
       <div className="result-panel__header">
-        <div>
-          <h1 id="result-title" tabIndex={-1}>
-            {copy.resultTitle}
-          </h1>
-        </div>
+        <h1 id="result-title" tabIndex={-1}>
+          {copy.resultTitle}
+        </h1>
         <div className="result-panel__header-actions">
           <p>{copy.decisionCount(decisionCount)}</p>
           <button
@@ -87,11 +85,8 @@ export function RankingResult({
       )}
 
       <ol className="ranking-list">
-        {ranking.map((item, index) => (
+        {ranking.map((item) => (
           <li key={item.id}>
-            <span className="ranking-list__position">
-              {String(index + 1).padStart(2, '0')}
-            </span>
             <span className="ranking-list__label">{item.label}</span>
           </li>
         ))}
