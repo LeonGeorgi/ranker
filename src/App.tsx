@@ -124,7 +124,6 @@ interface HistoryButtonProps {
   readonly copy: AppCopy['history']
   readonly count: number
   readonly isDialogOpen: boolean
-  readonly isCompact?: boolean
   readonly onOpen: () => void
 }
 
@@ -132,7 +131,6 @@ function HistoryButton({
   copy,
   count,
   isDialogOpen,
-  isCompact = false,
   onOpen,
 }: HistoryButtonProps) {
   const label = copy.openLabel(count)
@@ -140,11 +138,7 @@ function HistoryButton({
   return (
     <button
       type="button"
-      className={
-        isCompact
-          ? 'history-button history-button--compact'
-          : 'history-button'
-      }
+      className="history-button"
       aria-controls="ranking-history-dialog"
       aria-expanded={isDialogOpen}
       aria-haspopup="dialog"
@@ -157,13 +151,13 @@ function HistoryButton({
         <path d="M10 5.75V10l2.75 1.75" />
         <path d="M4.75 4.75 3 4.6l.15 1.75" />
       </svg>
-      {!isCompact && <span>{copy.open}</span>}
+      <span className="history-button__label">{copy.open}</span>
       {count > 0 && <span className="history-button__count">{count}</span>}
     </button>
   )
 }
 
-interface MobileSettingsProps {
+interface HeaderSettingsProps {
   readonly copy: AppCopy
   readonly language: Language
   readonly onLanguageChange: (language: Language) => void
@@ -171,15 +165,15 @@ interface MobileSettingsProps {
   readonly theme: ThemePreference
 }
 
-function MobileSettings({
+function HeaderSettings({
   copy,
   language,
   onLanguageChange,
   onThemeChange,
   theme,
-}: MobileSettingsProps) {
+}: HeaderSettingsProps) {
   return (
-    <details className="mobile-settings">
+    <details className="header-settings">
       <summary aria-label={copy.header.settings} title={copy.header.settings}>
         <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
           <path d="M3 5h14M3 10h14M3 15h14" />
@@ -188,8 +182,8 @@ function MobileSettings({
           <circle cx="8.5" cy="15" r="1.5" />
         </svg>
       </summary>
-      <div className="mobile-settings__panel">
-        <div className="mobile-settings__row">
+      <div className="header-settings__panel">
+        <div className="header-settings__row">
           <span>{copy.theme.pickerLabel}</span>
           <ThemeSwitcher
             copy={copy.theme}
@@ -197,7 +191,7 @@ function MobileSettings({
             onChange={onThemeChange}
           />
         </div>
-        <div className="mobile-settings__row">
+        <div className="header-settings__row">
           <span>{copy.language.pickerLabel}</span>
           <LanguageSwitcher
             copy={copy.language}
@@ -393,7 +387,7 @@ function App() {
     document.documentElement.dataset.theme = colorScheme
     setMetaContent(
       'meta[name="theme-color"]',
-      colorScheme === 'dark' ? '#121412' : '#f7f7f5',
+      colorScheme === 'dark' ? '#080808' : '#fafafa',
     )
   }, [colorScheme])
 
@@ -566,7 +560,7 @@ function App() {
     <div className="app-shell" lang={language}>
       <header className="app-header">
         <div className="brand">
-          <span className="brand__word">Ranker</span>
+          <span className="brand__word">ranker</span>
         </div>
 
         <div className="app-header__tools">
@@ -577,28 +571,7 @@ function App() {
             onOpen={() => setIsHistoryDialogOpen(true)}
           />
 
-          <ThemeSwitcher
-            copy={copy.theme}
-            theme={theme}
-            onChange={changeTheme}
-          />
-
-          <LanguageSwitcher
-            copy={copy.language}
-            language={language}
-            onChange={changeLanguage}
-          />
-        </div>
-
-        <div className="app-header__mobile-tools">
-          <HistoryButton
-            copy={copy.history}
-            count={history.entries.length}
-            isCompact
-            isDialogOpen={isHistoryDialogOpen}
-            onOpen={() => setIsHistoryDialogOpen(true)}
-          />
-          <MobileSettings
+          <HeaderSettings
             copy={copy}
             language={language}
             onLanguageChange={changeLanguage}

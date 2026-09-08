@@ -2,21 +2,20 @@
   width: min(calc(100% - 2rem), 29rem);
   padding: 1.5rem;
   border: 1px solid var(--border-subtle);
-  border-radius: 0.5rem;
+  border-radius: 0.2rem;
   color: var(--text-strong);
   background: var(--surface-raised);
-  box-shadow: 0 20px 60px rgb(20 22 20 / 18%);
 }
 
 .reset-dialog::backdrop {
-  background: rgb(23 22 20 / 48%);
+  background: color-mix(in srgb, var(--surface-page) 88%, transparent);
 }
 
 .reset-dialog h2 {
   margin: 0;
-  font-size: 1.45rem;
-  font-weight: 650;
-  letter-spacing: -0.03em;
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: 0;
   line-height: 1.15;
 }
 
@@ -39,13 +38,13 @@
   min-height: 2.75rem;
   padding: 0.65rem 0.9rem;
   border: 1px solid var(--danger-border-strong);
-  border-radius: 0.35rem;
+  border-radius: 0.2rem;
   outline: none;
   color: #fff;
   background: var(--danger-button);
   font: inherit;
   font-size: 0.76rem;
-  font-weight: 620;
+  font-weight: 500;
   cursor: pointer;
 }
 

@@ -67,24 +67,12 @@ export function ComparisonPanel({
 
   return (
     <section className="comparison-panel" aria-labelledby="comparison-title">
-      <div className="comparison-progress">
-        <p>
-          {copy.progressSummary(
-            determinedPercent,
-            progress.decisionCount,
-          )}
-        </p>
-        <div
-          className="comparison-progress__track"
-          role="progressbar"
-          aria-label={copy.progressLabel}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={determinedPercent}
-        >
-          <span style={{ width: `${determinedPercent}%` }} />
-        </div>
-      </div>
+      <p className="session-summary">
+        {copyByLanguage[language].sessionSummary(
+          progress.totalItemCount,
+          progress.decisionCount,
+        )}
+      </p>
 
       <div className="comparison-panel__question">
         <h1 id="comparison-title" tabIndex={-1}>
@@ -99,10 +87,10 @@ export function ComparisonPanel({
             onClick={() => onChoose(question.left.id, question.id)}
             aria-keyshortcuts="1 ArrowLeft"
           >
-            <span className="choice-button__number" aria-hidden="true">
-              1
-            </span>
             <span className="choice-button__label">{question.left.label}</span>
+            <kbd className="choice-button__number" aria-hidden="true">
+              1
+            </kbd>
           </button>
 
           <button
@@ -111,10 +99,10 @@ export function ComparisonPanel({
             onClick={() => onChoose(question.right.id, question.id)}
             aria-keyshortcuts="2 ArrowRight"
           >
-            <span className="choice-button__number" aria-hidden="true">
-              2
-            </span>
             <span className="choice-button__label">{question.right.label}</span>
+            <kbd className="choice-button__number" aria-hidden="true">
+              2
+            </kbd>
           </button>
         </div>
       </div>
@@ -132,6 +120,20 @@ export function ComparisonPanel({
         <button type="button" className="text-action" onClick={onEditList}>
           {copy.editList}
         </button>
+      </div>
+
+      <div className="comparison-progress">
+        <p>{copy.progressSummary(determinedPercent)}</p>
+        <div
+          className="comparison-progress__track"
+          role="progressbar"
+          aria-label={copy.progressLabel}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={determinedPercent}
+        >
+          <span style={{ width: `${determinedPercent}%` }} />
+        </div>
       </div>
 
       {storageWarning !== null && (

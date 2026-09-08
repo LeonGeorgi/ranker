@@ -59,7 +59,13 @@ async function createGraph(
   palette: GraphPalette,
   prefersReducedMotion: boolean,
 ): Promise<G6Graph> {
-  const { Graph } = await import('@antv/g6')
+  const [{ Graph }] = await Promise.all([
+    import('@antv/g6'),
+    import('./ranking-graph-edge.ts'),
+    // Canvas labels need the local fonts loaded before G6 measures their width.
+    document.fonts.load(`500 13px ${palette.labelFontFamily}`).catch(() => []),
+    document.fonts.load(`700 13px ${palette.labelFontFamily}`).catch(() => []),
+  ])
 
   return new Graph({
     container,
@@ -106,7 +112,7 @@ async function createGraph(
           strokeOpacity: 1,
           lineWidth: 1.75,
           labelFill: palette.accent,
-          labelFontWeight: 600,
+          labelFontWeight: 700,
         },
       },
       animation: prefersReducedMotion
@@ -114,7 +120,7 @@ async function createGraph(
         : { enter: 'fade', update: 'translate', exit: 'fade' },
     },
     edge: {
-      type: 'polyline',
+      type: 'ranking-polyline',
       style: {
         radius: 4,
         stroke: palette.edge,

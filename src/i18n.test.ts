@@ -49,8 +49,8 @@ describe('interface copy', () => {
     expect(copyByLanguage.en.setup.expectedComparisons(23)).toBe(
       'About 23 comparisons expected',
     )
-    expect(copyByLanguage.de.result.decisionCount(1)).toBe('1 Entscheidung')
-    expect(copyByLanguage.en.result.decisionCount(2)).toBe('2 decisions')
+    expect(copyByLanguage.de.sessionSummary(2, 1)).toBe('2 Einträge · 1 Entscheidung')
+    expect(copyByLanguage.en.sessionSummary(3, 2)).toBe('3 items · 2 decisions')
   })
 
   it('localizes dynamic graph descriptions', () => {
@@ -78,19 +78,19 @@ describe('interface copy', () => {
     )
   })
 
-  it('uses criterion-neutral wording for comparisons', () => {
-    expect(copyByLanguage.de.setup.title).toBe('Was gewinnt?')
-    expect(copyByLanguage.de.comparison.title).toBe('Was gewinnt?')
-    expect(copyByLanguage.en.setup.title).toBe('What wins?')
-    expect(copyByLanguage.en.comparison.title).toBe('What wins?')
+  it('gives setup and comparison distinct prompts', () => {
+    expect(copyByLanguage.de.setup.title).toBe('Neue Rangliste')
+    expect(copyByLanguage.de.comparison.title).toBe('Was ist dir lieber?')
+    expect(copyByLanguage.en.setup.title).toBe('New ranking')
+    expect(copyByLanguage.en.comparison.title).toBe('Which do you prefer?')
   })
 
   it('summarizes ranking progress without exposing scheduler details', () => {
-    expect(copyByLanguage.de.comparison.progressSummary(40, 3)).toBe(
-      '40 % bestimmt · 3 Entscheidungen',
+    expect(copyByLanguage.de.comparison.progressSummary(40)).toBe(
+      '40 % der Reihenfolge bestimmt',
     )
-    expect(copyByLanguage.en.comparison.progressSummary(10, 1)).toBe(
-      '10% determined · 1 decision',
+    expect(copyByLanguage.en.comparison.progressSummary(10)).toBe(
+      '10% of the order determined',
     )
   })
 })

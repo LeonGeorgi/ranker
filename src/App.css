@@ -25,40 +25,34 @@
 }
 
 .brand__word {
-  font-size: 0.92rem;
-  font-weight: 650;
-  letter-spacing: -0.015em;
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: 0;
 }
 
 .app-header__tools {
   display: flex;
   min-width: 0;
   align-items: center;
-  gap: 0.75rem;
-}
-
-.app-header__mobile-tools {
-  display: none;
-  align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
 }
 
 .history-button {
   position: relative;
   display: inline-flex;
-  min-height: 2.35rem;
+  min-height: 2.75rem;
   flex-shrink: 0;
   align-items: center;
   gap: 0.35rem;
   padding: 0.35rem 0.65rem;
-  border: 1px solid var(--border-control);
-  border-radius: 0.35rem;
+  border: 1px solid transparent;
+  border-radius: 0.2rem;
   outline: none;
   color: var(--text-muted);
-  background: var(--surface-raised);
+  background: transparent;
   font: inherit;
-  font-size: 0.76rem;
-  font-weight: 560;
+  font-size: 0.8rem;
+  font-weight: 500;
   cursor: pointer;
 }
 
@@ -72,37 +66,11 @@
   stroke-linejoin: miter;
 }
 
-.history-button--compact {
-  width: 2.75rem;
-  height: 2.75rem;
-  justify-content: center;
-  padding: 0;
-  border: 1px solid var(--border-control);
-  color: var(--text-strong);
-  background: var(--surface-raised);
-}
-
 .history-button__count {
   color: var(--text-faint);
   font-size: 0.7rem;
   font-variant-numeric: tabular-nums;
   line-height: 1;
-}
-
-.history-button--compact .history-button__count {
-  position: absolute;
-  top: -0.3rem;
-  right: -0.3rem;
-  display: grid;
-  min-width: 1.1rem;
-  height: 1.1rem;
-  place-items: center;
-  padding: 0 0.2rem;
-  border: 2px solid var(--surface-page);
-  border-radius: 999px;
-  color: var(--on-accent);
-  background: var(--accent-solid);
-  font-size: 0.58rem;
 }
 
 .history-button:focus-visible {
@@ -114,15 +82,15 @@
 .language-switch {
   display: inline-flex;
   flex-shrink: 0;
-  border: 1px solid var(--border-control);
-  border-radius: 0.35rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.2rem;
 }
 
 .theme-switch__option,
 .language-switch__option {
   display: inline-grid;
-  min-width: 2.25rem;
-  min-height: 2.25rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   place-items: center;
   padding: 0.3rem 0.5rem;
   border: 0;
@@ -132,29 +100,25 @@
   background: transparent;
   font: inherit;
   font-size: 0.72rem;
-  font-weight: 520;
+  font-weight: 500;
   cursor: pointer;
-}
-
-.theme-switch__option {
-  min-width: 2.25rem;
 }
 
 .theme-switch__option + .theme-switch__option,
 .language-switch__option + .language-switch__option {
-  border-inline-start: 1px solid var(--border-subtle);
+  border-inline-start: 1px solid transparent;
 }
 
 .theme-switch__option:first-child,
 .language-switch__option:first-child {
-  border-start-start-radius: calc(0.35rem - 1px);
-  border-end-start-radius: calc(0.35rem - 1px);
+  border-start-start-radius: calc(0.2rem - 1px);
+  border-end-start-radius: calc(0.2rem - 1px);
 }
 
 .theme-switch__option:last-child,
 .language-switch__option:last-child {
-  border-start-end-radius: calc(0.35rem - 1px);
-  border-end-end-radius: calc(0.35rem - 1px);
+  border-start-end-radius: calc(0.2rem - 1px);
+  border-end-end-radius: calc(0.2rem - 1px);
 }
 
 .theme-switch__option svg {
@@ -179,19 +143,18 @@
   outline-offset: 2px;
 }
 
-.mobile-settings {
+.header-settings {
   position: relative;
   z-index: 20;
-  display: none;
 }
 
-.mobile-settings > summary {
+.header-settings > summary {
   display: grid;
   width: 2.75rem;
   height: 2.75rem;
   place-items: center;
-  border: 1px solid var(--border-control);
-  border-radius: 0.25rem;
+  border: 1px solid transparent;
+  border-radius: 0.2rem;
   outline: none;
   color: var(--text-strong);
   background: transparent;
@@ -199,11 +162,11 @@
   list-style: none;
 }
 
-.mobile-settings > summary::-webkit-details-marker {
+.header-settings > summary::-webkit-details-marker {
   display: none;
 }
 
-.mobile-settings > summary svg {
+.header-settings > summary svg {
   width: 1.15rem;
   height: 1.15rem;
   overflow: visible;
@@ -213,17 +176,17 @@
   stroke-linecap: square;
 }
 
-.mobile-settings[open] > summary {
+.header-settings[open] > summary {
   border-color: var(--accent);
   color: var(--accent);
 }
 
-.mobile-settings > summary:focus-visible {
+.header-settings > summary:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
 
-.mobile-settings__panel {
+.header-settings__panel {
   position: absolute;
   top: calc(100% + 0.5rem);
   right: 0;
@@ -232,27 +195,26 @@
   gap: 1rem;
   padding: 1rem;
   border: 1px solid var(--border-subtle);
-  border-radius: 0.4rem;
+  border-radius: 0.2rem;
   background: var(--surface-raised);
-  box-shadow: 0 16px 40px rgb(20 22 20 / 14%);
 }
 
-.mobile-settings__row {
+.header-settings__row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
 }
 
-.mobile-settings__row > span {
+.header-settings__row > span {
   color: var(--text-muted);
   font-size: 0.78rem;
-  font-weight: 560;
+  font-weight: 500;
 }
 
 .app-workspace {
   display: grid;
-  grid-template-columns: minmax(26rem, 1fr) minmax(30rem, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0;
   width: min(100%, 104rem);
   min-height: calc(100svh - 3.75rem);
@@ -270,29 +232,29 @@
 .primary-action,
 .secondary-action {
   display: inline-flex;
-  min-height: 3.25rem;
+  min-height: 2.75rem;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  padding: 0.75rem 1.15rem;
-  border-radius: 0.35rem;
+  padding: 0.6rem 1rem;
+  border-radius: 0.2rem;
   outline: none;
   font: inherit;
   font-size: 0.84rem;
-  font-weight: 620;
+  font-weight: 500;
   cursor: pointer;
 }
 
 .primary-action {
-  border: 1px solid var(--accent-solid);
-  color: var(--on-accent);
-  background: var(--accent-solid);
+  border: 1px solid var(--border-control);
+  color: var(--text-strong);
+  background: transparent;
 }
 
 .primary-action:disabled {
-  border-color: var(--disabled-surface);
+  border-color: var(--border-subtle);
   color: var(--text-disabled);
-  background: var(--disabled-surface);
+  background: transparent;
   cursor: default;
 }
 
@@ -316,14 +278,14 @@
   gap: 0.4rem;
   min-height: 2.5rem;
   padding: 0.5rem 0.7rem;
-  border: 1px solid var(--border-control);
-  border-radius: 0.35rem;
+  border: 1px solid transparent;
+  border-radius: 0.2rem;
   outline: none;
   color: var(--text-muted);
   background: transparent;
   font: inherit;
-  font-size: 0.78rem;
-  font-weight: 560;
+  font-size: 0.84rem;
+  font-weight: 500;
   cursor: pointer;
 }
 
@@ -339,19 +301,18 @@
 }
 
 .primary-action:active:not(:disabled) {
-  border-color: var(--accent-solid-hover);
-  background: var(--accent-solid-hover);
+  border-color: var(--border-hover);
+  background: var(--surface-hover);
 }
 
 .secondary-action:active,
 .history-button:active,
-.mobile-settings > summary:active {
+.header-settings > summary:active {
   border-color: var(--border-hover);
   background: var(--choice-hover);
 }
 
 .text-action:active:not(:disabled) {
-  border-color: var(--border-hover);
   color: var(--text-strong);
   background: var(--surface-hover);
 }
@@ -360,6 +321,14 @@
 .language-switch__option:active:not([aria-pressed='true']) {
   color: var(--text-strong);
   background: var(--surface-hover);
+}
+
+.session-summary {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
 }
 
 h1[tabindex='-1']:focus {
@@ -399,21 +368,11 @@ h1[tabindex='-1']:focus {
   }
 
   .app-header__tools {
+    gap: 0.5rem;
+  }
+
+  .history-button__label {
     display: none;
-  }
-
-  .app-header__mobile-tools {
-    display: flex;
-  }
-
-  .mobile-settings {
-    display: block;
-  }
-
-  .mobile-settings .theme-switch__option,
-  .mobile-settings .language-switch__option {
-    min-width: 2.75rem;
-    min-height: 2.75rem;
   }
 
   .app-workspace {
@@ -433,19 +392,18 @@ h1[tabindex='-1']:focus {
   }
 
   .primary-action:hover:not(:disabled) {
-    border-color: var(--accent-solid-hover);
-    background: var(--accent-solid-hover);
+    border-color: var(--border-hover);
+    background: var(--surface-hover);
   }
 
   .secondary-action:hover,
   .history-button:hover,
-  .mobile-settings > summary:hover {
+  .header-settings > summary:hover {
     border-color: var(--border-hover);
     background: var(--surface-hover);
   }
 
   .text-action:hover:not(:disabled) {
-    border-color: var(--border-hover);
     color: var(--text-strong);
     background: var(--surface-hover);
   }

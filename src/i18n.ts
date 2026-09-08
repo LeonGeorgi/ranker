@@ -1,8 +1,11 @@
+import type { RankingExampleId } from './ranking-examples.ts'
+
 export type Language = 'de' | 'en'
 
 export const DEFAULT_LANGUAGE: Language = 'en'
 
 export interface AppCopy {
+  readonly sessionSummary: (itemCount: number, decisionCount: number) => string
   readonly language: {
     readonly pickerLabel: string
     readonly germanLabel: string
@@ -45,6 +48,7 @@ export interface AppCopy {
     readonly title: string
     readonly description: string
     readonly examplesLabel: string
+    readonly exampleLabels: Readonly<Record<RankingExampleId, string>>
     readonly replaceExamples: string
     readonly insertExample: (title: string) => string
     readonly listLabel: string
@@ -68,10 +72,7 @@ export interface AppCopy {
   }
   readonly comparison: {
     readonly progressLabel: string
-    readonly progressSummary: (
-      percent: number,
-      decisionCount: number,
-    ) => string
+    readonly progressSummary: (percent: number) => string
     readonly title: string
     readonly hint: string
     readonly undo: string
@@ -86,7 +87,6 @@ export interface AppCopy {
     readonly changeLastDecision: string
     readonly newRanking: string
     readonly resultTitle: string
-    readonly decisionCount: (count: number) => string
     readonly copied: string
     readonly copyList: string
     readonly copyFailed: string
@@ -123,6 +123,8 @@ function englishDecisionLabel(count: number): string {
 
 export const copyByLanguage = {
   de: {
+    sessionSummary: (itemCount, decisionCount) =>
+      `${itemCount} ${itemCount === 1 ? 'Eintrag' : 'Einträge'} · ${decisionCount} ${germanDecisionLabel(decisionCount)}`,
     language: {
       pickerLabel: 'Sprache',
       germanLabel: 'Deutsch',
@@ -166,21 +168,30 @@ export const copyByLanguage = {
       writeFailed: 'Deine Daten konnten nicht lokal gespeichert werden.',
     },
     setup: {
-      title: 'Was gewinnt?',
+      title: 'Neue Rangliste',
       description:
-        'Ein Eintrag pro Zeile. Du entscheidest jeweils zwischen zwei – daraus entsteht deine Rangliste.',
-      examplesLabel: 'Beispiele',
+        'Vergleiche je zwei Einträge nach deiner Vorliebe.',
+      examplesLabel: 'Beispiel einsetzen',
+      exampleLabels: {
+        'apartment-features': 'Wohnen',
+        'working-conditions': 'Arbeit',
+        superpowers: 'Superkräfte',
+        'essential-inventions': 'Erfindungen',
+        'desert-island': 'Inselgepäck',
+        'travel-destinations': 'Reiseziele',
+        'ice-cream-flavors': 'Eissorten',
+      },
       replaceExamples: 'Andere',
       insertExample: (title) => `Beispiel „${title}“ einfügen`,
-      listLabel: 'Deine Liste',
+      listLabel: 'Deine Einträge',
       itemCount: (count) =>
         `${count} ${count === 1 ? 'Eintrag' : 'Einträge'}`,
-      help: 'Ein Eintrag pro Zeile, mindestens 2 und höchstens 50.',
-      placeholder: 'Schokolade\nGummibärchen\nLakritz\nKekse',
-      start: 'Ranking starten',
+      help: '2–50 Einträge, ein Eintrag pro Zeile.',
+      placeholder: 'Liste eingeben oder einfügen',
+      start: 'Vergleichen',
       expectedComparisons: (count) =>
         `Voraussichtlich ${count} ${count === 1 ? 'Vergleich' : 'Vergleiche'}`,
-      localNote: 'Dein Fortschritt bleibt nur in diesem Browser gespeichert.',
+      localNote: 'Automatisch in diesem Browser gespeichert.',
     },
     input: {
       lineTooLong: (lineNumber, maximumLength) =>
@@ -195,11 +206,9 @@ export const copyByLanguage = {
     },
     comparison: {
       progressLabel: 'Fortschritt der Rangliste',
-      progressSummary: (percent, decisionCount) =>
-        `${percent} % bestimmt · ${decisionCount} ${germanDecisionLabel(decisionCount)}`,
-      title: 'Was gewinnt?',
-      hint:
-        'Bleib bei demselben Kriterium und wähle immer genau eine Option.',
+      progressSummary: (percent) => `${percent} % der Reihenfolge bestimmt`,
+      title: 'Was ist dir lieber?',
+      hint: 'Entscheide nach demselben Kriterium.',
       undo: 'Rückgängig',
       editList: 'Liste ändern',
       liveQuestion: (decisionNumber, leftLabel, rightLabel) =>
@@ -209,7 +218,6 @@ export const copyByLanguage = {
       changeLastDecision: 'Letzte Entscheidung ändern',
       newRanking: 'Neue Rangliste',
       resultTitle: 'Deine Rangliste',
-      decisionCount: (count) => `${count} ${germanDecisionLabel(count)}`,
       copied: 'Kopiert',
       copyList: 'Liste kopieren',
       copyFailed: 'Kopieren ist in diesem Browser gerade nicht möglich.',
@@ -218,7 +226,7 @@ export const copyByLanguage = {
       description: (nodeCount, edgeCount) =>
         `${nodeCount} ${nodeCount === 1 ? 'sichtbarer Eintrag' : 'sichtbare Einträge'} und ${edgeCount} ${germanDecisionLabel(edgeCount)}. Pfeile zeigen zum höher eingeordneten Eintrag.`,
       emptyDescription: 'Der Entscheidungsgraph ist noch leer.',
-      title: 'Dein Entscheidungsgraph',
+      title: 'Deine Entscheidungen',
       controlsLabel: 'Graphansicht steuern',
       zoomOut: 'Graph verkleinern',
       zoomIn: 'Graph vergrößern',
@@ -228,7 +236,7 @@ export const copyByLanguage = {
       emptyMessage: 'Dein Graph entsteht mit der ersten Entscheidung.',
       renderError:
         'Der Graph konnte gerade nicht dargestellt werden. Deine Entscheidungen bleiben gespeichert.',
-      legend: 'Der Pfeil zeigt immer zum höher eingeordneten Eintrag.',
+      legend: 'Pfeile zeigen zu deinem Favoriten.',
     },
     reset: {
       title: 'Bisherige Entscheidungen löschen?',
@@ -239,6 +247,8 @@ export const copyByLanguage = {
     },
   },
   en: {
+    sessionSummary: (itemCount, decisionCount) =>
+      `${itemCount} ${itemCount === 1 ? 'item' : 'items'} · ${decisionCount} ${englishDecisionLabel(decisionCount)}`,
     language: {
       pickerLabel: 'Language',
       germanLabel: 'Deutsch',
@@ -282,20 +292,29 @@ export const copyByLanguage = {
       writeFailed: 'Your data could not be saved locally.',
     },
     setup: {
-      title: 'What wins?',
+      title: 'New ranking',
       description:
-        'Add one item per line. You choose between two at a time – Ranker turns that into your ranking.',
-      examplesLabel: 'Examples',
+        'Choose your preferred item in each pair.',
+      examplesLabel: 'Use an example',
+      exampleLabels: {
+        'apartment-features': 'Housing',
+        'working-conditions': 'Work',
+        superpowers: 'Superpowers',
+        'essential-inventions': 'Inventions',
+        'desert-island': 'Island essentials',
+        'travel-destinations': 'Destinations',
+        'ice-cream-flavors': 'Ice cream',
+      },
       replaceExamples: 'More',
       insertExample: (title) => `Insert the “${title}” example`,
-      listLabel: 'Your list',
+      listLabel: 'Your items',
       itemCount: (count) => `${count} ${count === 1 ? 'item' : 'items'}`,
-      help: 'One item per line, with a minimum of 2 and a maximum of 50.',
-      placeholder: 'Chocolate\nGummy bears\nLicorice\nCookies',
-      start: 'Start ranking',
+      help: '2–50 items, one item per line.',
+      placeholder: 'Type or paste your list',
+      start: 'Compare',
       expectedComparisons: (count) =>
         `About ${count} ${count === 1 ? 'comparison' : 'comparisons'} expected`,
-      localNote: 'Your progress is stored only in this browser.',
+      localNote: 'Saved automatically in this browser.',
     },
     input: {
       lineTooLong: (lineNumber, maximumLength) =>
@@ -310,11 +329,9 @@ export const copyByLanguage = {
     },
     comparison: {
       progressLabel: 'Ranking progress',
-      progressSummary: (percent, decisionCount) =>
-        `${percent}% determined · ${decisionCount} ${englishDecisionLabel(decisionCount)}`,
-      title: 'What wins?',
-      hint:
-        'Keep using the same criterion and always choose exactly one option.',
+      progressSummary: (percent) => `${percent}% of the order determined`,
+      title: 'Which do you prefer?',
+      hint: 'Keep the same criterion in mind.',
       undo: 'Undo',
       editList: 'Edit list',
       liveQuestion: (decisionNumber, leftLabel, rightLabel) =>
@@ -324,7 +341,6 @@ export const copyByLanguage = {
       changeLastDecision: 'Change last decision',
       newRanking: 'New ranking',
       resultTitle: 'Your ranking',
-      decisionCount: (count) => `${count} ${englishDecisionLabel(count)}`,
       copied: 'Copied',
       copyList: 'Copy list',
       copyFailed: 'Copying is not currently available in this browser.',
@@ -333,7 +349,7 @@ export const copyByLanguage = {
       description: (nodeCount, edgeCount) =>
         `${nodeCount} visible ${nodeCount === 1 ? 'item' : 'items'} and ${edgeCount} ${englishDecisionLabel(edgeCount)}. Arrows point to the higher-ranked item.`,
       emptyDescription: 'The decision graph is still empty.',
-      title: 'Your decision graph',
+      title: 'Your decisions',
       controlsLabel: 'Control graph view',
       zoomOut: 'Zoom out',
       zoomIn: 'Zoom in',
@@ -343,7 +359,7 @@ export const copyByLanguage = {
       emptyMessage: 'Your graph will appear after the first decision.',
       renderError:
         'The graph could not be displayed. Your decisions are still saved.',
-      legend: 'The arrow always points to the higher-ranked item.',
+      legend: 'Arrows point to your preferred item.',
     },
     reset: {
       title: 'Delete previous decisions?',

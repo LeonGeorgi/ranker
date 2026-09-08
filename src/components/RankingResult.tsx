@@ -52,20 +52,20 @@ export function RankingResult({
       }
       aria-labelledby="result-title"
     >
+      <p className="session-summary">
+        {copyByLanguage[language].sessionSummary(ranking.length, decisionCount)}
+      </p>
       <div className="result-panel__header">
         <h1 id="result-title" tabIndex={-1}>
           {copy.resultTitle}
         </h1>
-        <div className="result-panel__header-actions">
-          <p>{copy.decisionCount(decisionCount)}</p>
-          <button
-            type="button"
-            className="secondary-action"
-            onClick={() => void copyRanking()}
-          >
-            {copyStatus === 'copied' ? copy.copied : copy.copyList}
-          </button>
-        </div>
+        <svg
+          className="result-panel__complete"
+          viewBox="0 0 20 20"
+          aria-hidden="true"
+        >
+          <path d="m4 10 4 4 8-8" />
+        </svg>
       </div>
 
       <p className="visually-hidden" aria-live="polite">
@@ -93,14 +93,25 @@ export function RankingResult({
       </ol>
 
       <div className="result-panel__buttons">
-        <button type="button" className="text-action" onClick={onUndo}>
-          <UndoIcon />
-          {copy.changeLastDecision}
+        <button
+          type="button"
+          className="primary-action"
+          onClick={() => void copyRanking()}
+        >
+          {copyStatus === 'copied' ? copy.copied : copy.copyList}
         </button>
         <button type="button" className="text-action" onClick={onEditList}>
           {copy.newRanking}
         </button>
       </div>
+      <button
+        type="button"
+        className="text-action result-panel__undo"
+        onClick={onUndo}
+      >
+        <UndoIcon />
+        {copy.changeLastDecision}
+      </button>
     </section>
   )
 }

@@ -90,16 +90,8 @@ export function ListSetup({
         <div className="setup-form__custom-list">
           <div className="setup-form__label-row">
             <label htmlFor="ranking-items">{copy.listLabel}</label>
-            <span className="setup-form__meta">
-              <span>{countLabel}</span>
-              {analysis.error === null && (
-                <span>{copy.expectedComparisons(expectedDecisionCount)}</span>
-              )}
-            </span>
+            <span className="setup-form__meta">{countLabel}</span>
           </div>
-          <p id="ranking-items-help" className="field-help">
-            {copy.help}
-          </p>
           <textarea
             ref={textareaRef}
             id="ranking-items"
@@ -110,8 +102,11 @@ export function ListSetup({
             aria-describedby="ranking-items-help ranking-items-feedback"
             aria-invalid={shouldShowError}
             placeholder={copy.placeholder}
-            rows={7}
+            rows={5}
           />
+          <p id="ranking-items-help" className="field-help">
+            {copy.help}
+          </p>
 
           <div id="ranking-items-feedback" className="setup-form__feedback">
             {shouldShowError && (
@@ -126,13 +121,20 @@ export function ListSetup({
             )}
           </div>
 
-          <button
-            type="submit"
-            className="primary-action setup-form__submit"
-            disabled={analysis.error !== null}
-          >
-            {copy.start}
-          </button>
+          <div className="setup-form__start-row">
+            <button
+              type="submit"
+              className="primary-action"
+              disabled={analysis.error !== null}
+            >
+              {copy.start}
+            </button>
+            {analysis.error === null && (
+              <span className="setup-form__estimate">
+                {copy.expectedComparisons(expectedDecisionCount)}
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="setup-examples">
@@ -166,10 +168,11 @@ export function ListSetup({
                   key={exampleId}
                   type="button"
                   className="setup-examples__choice"
-                  aria-label={copy.insertExample(example.title)}
+                  aria-label={copy.insertExample(copy.exampleLabels[exampleId])}
+                  title={example.title}
                   onClick={() => insertExample(exampleId)}
                 >
-                  {example.title}
+                  {copy.exampleLabels[exampleId]}
                 </button>
               )
             })}

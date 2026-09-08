@@ -4,10 +4,9 @@
   padding: 0;
   overflow: hidden;
   border: 1px solid var(--border-subtle);
-  border-radius: 0.5rem;
+  border-radius: 0.2rem;
   color: var(--text-strong);
   background: var(--surface-raised);
-  box-shadow: 0 20px 60px rgb(20 22 20 / 18%);
 }
 
 .history-dialog[open] {
@@ -16,7 +15,7 @@
 }
 
 .history-dialog::backdrop {
-  background: rgb(23 22 20 / 48%);
+  background: color-mix(in srgb, var(--surface-page) 88%, transparent);
 }
 
 .history-dialog__header {
@@ -30,9 +29,9 @@
 
 .history-dialog__header h2 {
   margin: 0;
-  font-size: clamp(1.45rem, 3vw, 1.8rem);
-  font-weight: 650;
-  letter-spacing: -0.03em;
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: 0;
   line-height: 1.1;
 }
 
@@ -49,7 +48,7 @@
   color: var(--text-strong);
   background: var(--surface-raised);
   font: inherit;
-  font-size: 1.45rem;
+  font-size: 1.25rem;
   line-height: 1;
   cursor: pointer;
 }
@@ -129,7 +128,7 @@
   min-width: 0;
   overflow-wrap: anywhere;
   font-size: 0.9rem;
-  font-weight: 720;
+  font-weight: 500;
 }
 
 .history-entry__meta {
@@ -154,7 +153,7 @@
   overflow-wrap: anywhere;
   color: var(--text-strong);
   font-size: 0.86rem;
-  font-weight: 540;
+  font-weight: 400;
 }
 
 .history-entry__ranking li::marker {

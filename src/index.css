@@ -1,26 +1,46 @@
+@font-face {
+  font-family: 'Roboto Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./assets/fonts/roboto-mono-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Roboto Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('./assets/fonts/roboto-mono-medium.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Roboto Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./assets/fonts/roboto-mono-bold.woff2') format('woff2');
+}
+
 :root {
   color-scheme: light;
-  --font-sans:
-    ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-ui: var(--font-sans);
+  --font-ui: 'Roboto Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
 
-  font-family: var(--font-sans);
-  color: #191b19;
-  background: #f7f7f5;
+  font-family: var(--font-ui);
+  color: #282828;
+  background: #fafafa;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --accent: #2f56c6;
-  --accent-solid: #2f56c6;
-  --accent-solid-hover: #24449e;
-  --on-accent: #fff;
-  --border-control: #8b918b;
-  --border-hover: #6f756f;
-  --border-strong: #8b918b;
-  --border-subtle: #d8dcd7;
-  --choice-hover: #ecefec;
+  --accent: #2474a8;
+  --border-control: #a3a3a3;
+  --border-hover: #606060;
+  --border-strong: #a3a3a3;
+  --border-subtle: #dddddd;
+  --choice-hover: #f0f0f0;
+  --surface-graph: #f5f5f5;
   --danger-border: #e3beb8;
   --danger-border-strong: #b95e53;
   --danger-button: #a9483e;
@@ -28,19 +48,18 @@
   --danger-focus: rgb(169 72 62 / 22%);
   --danger-surface: #fff4f1;
   --danger-text: #96463e;
-  --disabled-surface: #e4e6e2;
-  --focus-soft: rgb(47 86 198 / 24%);
-  --graph-accent: #2f56c6;
-  --graph-edge-latest: #2f56c6;
-  --progress-track: #d8dcd7;
-  --surface-page: #f7f7f5;
-  --surface-hover: #ecefec;
+  --focus-soft: rgb(36 116 168 / 8%);
+  --graph-accent: #2474a8;
+  --graph-edge-latest: #2474a8;
+  --progress-track: #dddddd;
+  --surface-page: #fafafa;
+  --surface-hover: #f0f0f0;
   --surface-raised: #fff;
-  --surface-raised-soft: #ecefec;
-  --text-disabled: #979c96;
-  --text-faint: #686d68;
-  --text-muted: #5f645f;
-  --text-strong: #191b19;
+  --surface-raised-soft: #f0f0f0;
+  --text-disabled: #767676;
+  --text-faint: #606060;
+  --text-muted: #606060;
+  --text-strong: #282828;
   --warning-text: #896020;
 }
 
@@ -57,6 +76,7 @@ body {
   min-width: 20rem;
   min-height: 100vh;
   margin: 0;
+  font-size: 0.875rem;
 }
 
 button,
@@ -75,18 +95,16 @@ button {
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  color: #f1f3ef;
-  background: #121412;
+  color: #f5f5f5;
+  background: #080808;
 
-  --accent: #a5b5ff;
-  --accent-solid: #4a64bb;
-  --accent-solid-hover: #5b73c7;
-  --on-accent: #fff;
-  --border-control: #686f68;
-  --border-hover: #8b928a;
-  --border-strong: #686f68;
-  --border-subtle: #323732;
-  --choice-hover: #232823;
+  --accent: #79b8e3;
+  --border-control: #707070;
+  --border-hover: #b0b0b0;
+  --border-strong: #707070;
+  --border-subtle: #333333;
+  --choice-hover: #181818;
+  --surface-graph: #111111;
   --danger-border: #704943;
   --danger-border-strong: #d98177;
   --danger-button: #b95d53;
@@ -94,19 +112,18 @@ button {
   --danger-focus: rgb(217 129 119 / 26%);
   --danger-surface: #2a1f1d;
   --danger-text: #e6a49d;
-  --disabled-surface: #2d312d;
-  --focus-soft: rgb(165 181 255 / 30%);
-  --graph-accent: #a5b5ff;
-  --graph-edge-latest: #a5b5ff;
-  --progress-track: #323732;
-  --surface-page: #121412;
-  --surface-hover: #232823;
-  --surface-raised: #191c19;
-  --surface-raised-soft: #232823;
-  --text-disabled: #6f756e;
-  --text-faint: #9ea49d;
-  --text-muted: #b6bbb4;
-  --text-strong: #f1f3ef;
+  --focus-soft: rgb(121 184 227 / 10%);
+  --graph-accent: #79b8e3;
+  --graph-edge-latest: #79b8e3;
+  --progress-track: #333333;
+  --surface-page: #080808;
+  --surface-hover: #1a1a1a;
+  --surface-raised: #111111;
+  --surface-raised-soft: #1a1a1a;
+  --text-disabled: #888888;
+  --text-faint: #b0b0b0;
+  --text-muted: #bbbbbb;
+  --text-strong: #f5f5f5;
   --warning-text: #d7ae6b;
 }
 

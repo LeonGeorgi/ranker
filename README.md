@@ -38,7 +38,7 @@ weighted scheduler interleaves new discovery pairs with merge comparisons and
 avoids repeatedly showing the same items. This produces an exact total order;
 it is not an Elo rating, score, or win-count approximation.
 
-The start button shows the rounded expected number of comparisons for the
+Next to the start button, the app shows the rounded expected comparison count for the
 current list size. This estimate is the exact mean of the balanced merge process
 under a uniformly shuffled strict order, not a guaranteed number of questions.
 The final ranking becomes available only when the merge is complete and the
@@ -105,6 +105,8 @@ npm run simulate:ranking -- --trials=10000 --lengths=10,25,50 --seed=42
 - `src/i18n.ts` contains all English and German interface copy.
 - `src/index.css` defines global foundations and design tokens; `src/App.css`
   defines the responsive workspace.
+- `src/assets/fonts/` contains the locally served Roboto Mono font files,
+  licensed under the [SIL Open Font License](public/fonts/OFL.txt).
 - `public/og.png` is the social-sharing preview image.
 - `scripts/simulate-ranking.mjs` independently analyzes the ranking algorithm.
 - `AGENTS.md` documents the project's implementation and maintenance rules.
